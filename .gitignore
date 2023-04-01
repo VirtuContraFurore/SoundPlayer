@@ -1,7 +1,8 @@
 *lock
 *flock
-*bak
-*swp
+*.bak
+*.swp
+*.rpt
 db/*
 incremental_db/
 output_files/
