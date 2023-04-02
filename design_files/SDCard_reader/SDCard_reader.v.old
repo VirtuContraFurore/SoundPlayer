@@ -9,7 +9,9 @@ module SDCard_reader(
     sd_card_ready, read_block, block_addr,
     data_out, data_idx, data_rdy, continous_read,
     
-    r0_d
+    /* Debug singnals */
+    debug_bus, debug_ctrl
+    
 `ifdef DEBUG_SDCARD_READER
     , cmd_fsm_d, spi_busy_d, spi_req_d, cmd_counter_d, cmd_index_d, spi_tx_output_d, packet_0_d, 
 `endif
@@ -19,9 +21,7 @@ module SDCard_reader(
 /* Local params */
 `include "SPI_consts.v"
 `include "SDCard_const.v"
-localparam SPI_SIZE = 4'd8;
-localparam CARD_CMD_BYTES = 6; /* Lenght of SD command in bytes */
-localparam CARD_BLOCKLEN_BYTES = 512; /* Block lenght in bytes*/
+
 
 /* Ports definition */
 input clk;
@@ -45,7 +45,6 @@ reg [SPI_PSCLR_BITS-1:0] spi_clk_prescaler = SPI_PSCLR_DIV8;
 reg spi_tx_en = 0;
 reg spi_req = 0;
 reg spi_req1 = 0;
-reg [SPI_SIZE-1:0] spi_tx_data = 0;
 reg [FSM_BITS-1:0] fsm_state = 0;
 reg [FSM_BITS-1:0] linked_state = 0;
 reg [CMD_FSM_BITS-1:0] cmd_fsm_state = 0;
@@ -57,6 +56,7 @@ reg [11:0] cmd_counter = 0;
 reg [11:0] cmd_resp_lenght = 0;
 reg send_cmd_req = 0;
 reg [CMD_BITS-1:0] cmd = NOCMD;
+reg [CMD_BITS-1:0] cmd_ = NOCMD;
 reg [12:0] pulse_counter = 0;
 reg [31:0] block_addr_;
 reg [11:0] byte_counter;
@@ -71,6 +71,7 @@ wire cmd_executing;
 wire spi_req_or;
 wire cmd_ready;
 wire [7:0] R0;
+wire [SPI_SIZE-1:0] spi_tx_data;
 
 /* Master SPI instance */
 SPI_master #(
@@ -99,9 +100,10 @@ assign spi_ready = !spi_busy;
 assign sd_card_ready = (fsm_state == FSM_CARD_READY);
 assign spi_req_or = spi_req | spi_req1;
 assign R0 = cmd_response[0];
+assign spi_tx_data = card_cmd_packet[cmd_counter];
 
 /* Defines */
-`define SEND_CMD(command, next_state) begin cmd <= command; linked_state <= next_state; fsm_state <= FSM_RUN_CMD_0; end
+`define SEND_CMD(command, next_state) begin cmd <= command; cmd_ <= command; linked_state <= next_state; fsm_state <= FSM_RUN_CMD_0; end
 `define SDCARD_SEND_CMD(index, param, ret_bytes, crc) begin cmd_index <= index; cmd_arg <= param; cmd_crc <= crc; cmd_resp_lenght <= ret_bytes; send_cmd_req <= 1; end
 `ifdef DEBUG_SDCARD_READER
 `define STARTUP_PRESCALER SPI_PSCLR_DIV4
@@ -198,6 +200,7 @@ always @ (posedge clk) begin
             fsm_state <= (spi_rx_data == 8'h00) ? FSM_CARD_BUSY_6 : FSM_CARD_READY;
     end
     FSM_RUN_CMD_0: begin
+        cmd <= cmd_;
         if(!cmd_ready) begin
             fsm_state <= FSM_RUN_CMD_1;
             cmd <= NOCMD;
@@ -223,14 +226,12 @@ always @ (posedge clk) begin
         cmd_fsm_state <= (send_cmd_req) ? CMD_FSM_SEND_CMD_1 : cmd_fsm_state;
     end
     CMD_FSM_SEND_CMD_1: begin
-        spi_tx_data <= card_cmd_packet[0];
         spi_tx_en <= 1;
-        spi_req <= 1;
+        spi_req   <= 1;
         cmd_fsm_state <= CMD_FSM_SEND_CMD_2;
     end
     CMD_FSM_SEND_CMD_2: begin
         spi_tx_en   <= cmd_counter < CARD_CMD_BYTES;
-        spi_tx_data <= card_cmd_packet[cmd_counter];
         if(spi_ready) begin
             cmd_counter   <= (cmd_counter < CARD_CMD_BYTES) ? cmd_counter + 1 : 0;
             cmd_fsm_state <= (cmd_counter < CARD_CMD_BYTES) ? cmd_fsm_state : CMD_FSM_RECEIVE_CMD_RESP_2;
@@ -296,7 +297,14 @@ assign spi_tx_output_d = spi_tx_data;
 assign packet_0_d = card_cmd_packet[0];
 `endif
 
-output [7:0] r0_d;
-assign r0_d = R0;
+output [7:0] debug_bus;
+wire [7:0] debug_bus_[7:0];
+input [3:0] debug_ctrl;
+assign debug_bus_[0] = fsm_state;
+assign debug_bus_[1] = cmd_fsm_state;
+assign debug_bus_[2] = R0;
+assign debug_bus_[3] = cmd;
+assign debug_bus_[4] = spi_ready;
+assign debug_bus = debug_bus_[debug_ctrl];
 
 endmodule

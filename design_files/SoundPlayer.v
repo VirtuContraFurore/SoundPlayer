@@ -21,43 +21,58 @@ output wire SD_CS;
 output [17:0] LEDR;
 output [7:0] LEDG;
 
+`include "SDCard_reader/SDCard_reader_consts.v"
+
 /* Internal wires */
-wire global_rst_n; 
-wire sd_ready;
-wire sd_data_rdy;
 wire clk;
-wire [7:0] sd_data_out;
-wire [11:0] sd_data_idx;
-wire sd_read_block;
-reg sd_continous_read = 1;
-reg [31:0] sd_block_addr = 0;
+wire rst_n; 
+
+wire sd_configured;
+
+wire block_read_trigger;
+wire block_read_card_ready;
+wire block_read_continous_mode;
+wire [SD_BLOCK_ADDR_BITS-1:0] block_read_block_addr;
+wire [7:0] block_read_data_out;
+wire [SD_BLOCK_LENGHT_BITS-1:0] block_read_data_idx;
+wire block_read_data_new_flag;
 
 /* Internal assignments */
+assign clk = CLOCK_50;
+assign rst_n = KEY[3];
+
 assign GPIO_0[0] = SD_SCLOCK;
 assign GPIO_0[1] = SD_DO;
 assign GPIO_0[2] = SD_DI;
 assign GPIO_0[3] = SD_CS;
-assign clk = CLOCK_50;
-assign sd_read_block = !KEY[2];
-assign global_rst_n = KEY[3];
-assign LEDG[1] = sd_ready;
+
+assign LEDG[1] = block_read_card_ready;
+assign LEDG[0] = sd_configured;
+
+assign block_read_trigger = !KEY[2];
+assign block_read_continous_mode = SW[0];
+assign block_read_block_addr = 32'h00000000;
 
 SDCard_reader sd_card (
     .clk(clk),
-    .rst_n(global_rst_n),
-    .card_configured(LEDG[0]),
+    .rst_n(rst_n),
+    
+    .card_configured(sd_configured),
+    
+    /* SD Card physical interface */
     .sd_do(SD_DO),
     .sd_di(SD_DI),
     .sd_clk(SD_SCLOCK),
     .sd_cs_n(SD_CS),
-    .sd_card_ready(sd_ready),
-    .read_block(sd_read_block), 
-    .block_addr(sd_block_addr),
-    .data_out(sd_data_out),
-    .data_idx(sd_data_idx),
-    .data_rdy(sd_data_rdy),
-    .continous_read(1),
-    .r0_d(LEDR[7:0])
+    
+    /* Block read interface */
+    .block_read_trigger(block_read_trigger),
+    .block_read_card_ready(block_read_card_ready),
+    .block_read_continous_mode(block_read_continous_mode),
+    .block_read_block_addr(block_read_block_addr),
+    .block_read_data_out(block_read_data_out),
+    .block_read_data_idx(block_read_data_idx),
+    .block_read_data_new_flag(block_read_data_new_flag),
 );
 
 endmodule

@@ -1,5 +1,5 @@
 /* 
- * SD Card reader constants
+ * SD Card reader private constants
  * This file must NOT be compiled alone!
  * For this file, set Properties... -> Type to 'Macro File'
  */
@@ -24,11 +24,14 @@ localparam FSM_CARD_BUSY_1         = 15;
 localparam FSM_CARD_BUSY_2         = 16;
 localparam FSM_CARD_BUSY_3         = 17;
 localparam FSM_CARD_BUSY_4         = 18;
-localparam FSM_CARD_BUSY_5         = 19;
-localparam FSM_CARD_BUSY_6         = 20;
-localparam FSM_CARD_BUSY_7         = 21;
-localparam FSM_STATES           = 22;
-localparam FSM_BITS             = $clog2(FSM_STATES);
+localparam FSM_CARD_BUSY_CRC_1     = 19;
+localparam FSM_CARD_BUSY_CRC_2     = 20;
+localparam FSM_CARD_BUSY_CRC_3     = 21;
+localparam FSM_CARD_BUSY_STOP_1    = 22;
+localparam FSM_CARD_BUSY_STOP_2    = 23;
+localparam FSM_CARD_BUSY_STOP_3    = 24;
+localparam FSM_STATES              = 25; /* number of states */
+localparam FSM_BITS                = $clog2(FSM_STATES);
 
 /* Command exec FSM States */
 localparam CMD_FSM_IDLE               = 0;
@@ -38,19 +41,32 @@ localparam CMD_FSM_RECEIVE_CMD_RESP_1 = 3;
 localparam CMD_FSM_RECEIVE_CMD_RESP_2 = 4;
 localparam CMD_FSM_RECEIVE_CMD_RESP_3 = 5;
 localparam CMD_FSM_RECEIVE_CMD_RESP_4 = 6;
-localparam CMD_FSM_STATES             = 7;
+localparam CMD_FSM_STATES             = 7; /* number of states */
 localparam CMD_FSM_BITS               = $clog2(CMD_FSM_STATES);
 
 /* Commands list */
-localparam NOCMD  = 0;
-localparam CMD0   = 1;
-localparam CMD8   = 2;
-localparam CMD12  = 3;
-localparam CMD17  = 4;
-localparam CMD18  = 5;
-localparam CMD55  = 6;
-localparam CMD58  = 7;
-localparam ACMD41 = 8;
-localparam CMD_COUNT = 9;
+localparam NOCMD     = 0;
+localparam CMD0      = 1;
+localparam CMD8      = 2;
+localparam CMD12     = 3;
+localparam CMD17     = 4;
+localparam CMD18     = 5;
+localparam CMD55     = 6;
+localparam CMD58     = 7;
+localparam ACMD41    = 8;
+localparam CMD_COUNT = 9; /* number of cmd */
 localparam CMD_BITS  = $clog2(CMD_COUNT);
+
+/* Other params */
+localparam SPI_SIZE = 4'd8;
+localparam RESET_PULSES = 80;
+
+localparam CARD_CMD_BYTES        = 6;   /* Lenght of SD command in bytes */
+localparam CMD_SEND_COUNTER_BITS = $clog2(CARD_CMD_BYTES);
+
+localparam CMD_MAX_RESP_BYTES    = 5;
+localparam CMD_RESP_BITS         = CMD_MAX_RESP_BYTES*8;
+localparam CMD_RESP_COUNTER_BITS = $clog2(CMD_MAX_RESP_BYTES);
+
+
 
