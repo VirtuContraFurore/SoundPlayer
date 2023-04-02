@@ -3,7 +3,8 @@
 `define GLOBALS_INCLUDED
 
 /* Uncomment ignored config */
-`define DEBUG_SPI_MASTER
+//`define DEBUG_SPI_MASTER
+//`define DEBUG_SDCARD_READER
 
 `endif
 

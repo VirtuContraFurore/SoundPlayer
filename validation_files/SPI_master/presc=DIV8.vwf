@@ -416,60 +416,10 @@ SIGNAL("prescaler")
 {
 	VALUE_TYPE = NINE_LEVEL_BIT;
 	SIGNAL_TYPE = BUS;
-	WIDTH = 9;
+	WIDTH = 4;
 	LSB_INDEX = 0;
 	DIRECTION = INPUT;
 	PARENT = "";
-}
-
-SIGNAL("prescaler[8]")
-{
-	VALUE_TYPE = NINE_LEVEL_BIT;
-	SIGNAL_TYPE = SINGLE_BIT;
-	WIDTH = 1;
-	LSB_INDEX = -1;
-	DIRECTION = INPUT;
-	PARENT = "prescaler";
-}
-
-SIGNAL("prescaler[7]")
-{
-	VALUE_TYPE = NINE_LEVEL_BIT;
-	SIGNAL_TYPE = SINGLE_BIT;
-	WIDTH = 1;
-	LSB_INDEX = -1;
-	DIRECTION = INPUT;
-	PARENT = "prescaler";
-}
-
-SIGNAL("prescaler[6]")
-{
-	VALUE_TYPE = NINE_LEVEL_BIT;
-	SIGNAL_TYPE = SINGLE_BIT;
-	WIDTH = 1;
-	LSB_INDEX = -1;
-	DIRECTION = INPUT;
-	PARENT = "prescaler";
-}
-
-SIGNAL("prescaler[5]")
-{
-	VALUE_TYPE = NINE_LEVEL_BIT;
-	SIGNAL_TYPE = SINGLE_BIT;
-	WIDTH = 1;
-	LSB_INDEX = -1;
-	DIRECTION = INPUT;
-	PARENT = "prescaler";
-}
-
-SIGNAL("prescaler[4]")
-{
-	VALUE_TYPE = NINE_LEVEL_BIT;
-	SIGNAL_TYPE = SINGLE_BIT;
-	WIDTH = 1;
-	LSB_INDEX = -1;
-	DIRECTION = INPUT;
-	PARENT = "prescaler";
 }
 
 SIGNAL("prescaler[3]")
@@ -543,16 +493,6 @@ SIGNAL("_spi_fsm[0]")
 }
 
 SIGNAL("_spi_done")
-{
-	VALUE_TYPE = NINE_LEVEL_BIT;
-	SIGNAL_TYPE = SINGLE_BIT;
-	WIDTH = 1;
-	LSB_INDEX = -1;
-	DIRECTION = OUTPUT;
-	PARENT = "";
-}
-
-SIGNAL("_spi_falling_edge")
 {
 	VALUE_TYPE = NINE_LEVEL_BIT;
 	SIGNAL_TYPE = SINGLE_BIT;
@@ -1006,51 +946,6 @@ TRANSITION_LIST("data_tx[0]")
 	}
 }
 
-TRANSITION_LIST("prescaler[8]")
-{
-	NODE
-	{
-		REPEAT = 1;
-		LEVEL 0 FOR 2000.0;
-	}
-}
-
-TRANSITION_LIST("prescaler[7]")
-{
-	NODE
-	{
-		REPEAT = 1;
-		LEVEL 0 FOR 2000.0;
-	}
-}
-
-TRANSITION_LIST("prescaler[6]")
-{
-	NODE
-	{
-		REPEAT = 1;
-		LEVEL 0 FOR 2000.0;
-	}
-}
-
-TRANSITION_LIST("prescaler[5]")
-{
-	NODE
-	{
-		REPEAT = 1;
-		LEVEL 0 FOR 2000.0;
-	}
-}
-
-TRANSITION_LIST("prescaler[4]")
-{
-	NODE
-	{
-		REPEAT = 1;
-		LEVEL 0 FOR 2000.0;
-	}
-}
-
 TRANSITION_LIST("prescaler[3]")
 {
 	NODE
@@ -1115,15 +1010,6 @@ TRANSITION_LIST("_spi_fsm[0]")
 }
 
 TRANSITION_LIST("_spi_done")
-{
-	NODE
-	{
-		REPEAT = 1;
-		LEVEL 0 FOR 2000.0;
-	}
-}
-
-TRANSITION_LIST("_spi_falling_edge")
 {
 	NODE
 	{
@@ -1359,110 +1245,10 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "prescaler";
-	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
-	TREE_INDEX = 22;
-	TREE_LEVEL = 0;
-	CHILDREN = 23, 24, 25, 26, 27, 28, 29, 30, 31;
-}
-
-DISPLAY_LINE
-{
-	CHANNEL = "prescaler[8]";
-	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
-	TREE_INDEX = 23;
-	TREE_LEVEL = 1;
-	PARENT = 22;
-}
-
-DISPLAY_LINE
-{
-	CHANNEL = "prescaler[7]";
-	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
-	TREE_INDEX = 24;
-	TREE_LEVEL = 1;
-	PARENT = 22;
-}
-
-DISPLAY_LINE
-{
-	CHANNEL = "prescaler[6]";
-	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
-	TREE_INDEX = 25;
-	TREE_LEVEL = 1;
-	PARENT = 22;
-}
-
-DISPLAY_LINE
-{
-	CHANNEL = "prescaler[5]";
-	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
-	TREE_INDEX = 26;
-	TREE_LEVEL = 1;
-	PARENT = 22;
-}
-
-DISPLAY_LINE
-{
-	CHANNEL = "prescaler[4]";
-	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
-	TREE_INDEX = 27;
-	TREE_LEVEL = 1;
-	PARENT = 22;
-}
-
-DISPLAY_LINE
-{
-	CHANNEL = "prescaler[3]";
-	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
-	TREE_INDEX = 28;
-	TREE_LEVEL = 1;
-	PARENT = 22;
-}
-
-DISPLAY_LINE
-{
-	CHANNEL = "prescaler[2]";
-	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
-	TREE_INDEX = 29;
-	TREE_LEVEL = 1;
-	PARENT = 22;
-}
-
-DISPLAY_LINE
-{
-	CHANNEL = "prescaler[1]";
-	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
-	TREE_INDEX = 30;
-	TREE_LEVEL = 1;
-	PARENT = 22;
-}
-
-DISPLAY_LINE
-{
-	CHANNEL = "prescaler[0]";
-	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
-	TREE_INDEX = 31;
-	TREE_LEVEL = 1;
-	PARENT = 22;
-}
-
-DISPLAY_LINE
-{
 	CHANNEL = "rst_n";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
-	TREE_INDEX = 32;
+	TREE_INDEX = 22;
 	TREE_LEVEL = 0;
 }
 
@@ -1471,7 +1257,7 @@ DISPLAY_LINE
 	CHANNEL = "tx_en";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
-	TREE_INDEX = 33;
+	TREE_INDEX = 23;
 	TREE_LEVEL = 0;
 }
 
@@ -1480,8 +1266,58 @@ DISPLAY_LINE
 	CHANNEL = "req";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
-	TREE_INDEX = 34;
+	TREE_INDEX = 24;
 	TREE_LEVEL = 0;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "prescaler";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Binary;
+	TREE_INDEX = 25;
+	TREE_LEVEL = 0;
+	CHILDREN = 26, 27, 28, 29;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "prescaler[3]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Binary;
+	TREE_INDEX = 26;
+	TREE_LEVEL = 1;
+	PARENT = 25;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "prescaler[2]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Binary;
+	TREE_INDEX = 27;
+	TREE_LEVEL = 1;
+	PARENT = 25;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "prescaler[1]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Binary;
+	TREE_INDEX = 28;
+	TREE_LEVEL = 1;
+	PARENT = 25;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "prescaler[0]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Binary;
+	TREE_INDEX = 29;
+	TREE_LEVEL = 1;
+	PARENT = 25;
 }
 
 DISPLAY_LINE
@@ -1489,7 +1325,7 @@ DISPLAY_LINE
 	CHANNEL = "_spi_fsm[0]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
-	TREE_INDEX = 35;
+	TREE_INDEX = 30;
 	TREE_LEVEL = 0;
 }
 
@@ -1498,16 +1334,7 @@ DISPLAY_LINE
 	CHANNEL = "_spi_done";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
-	TREE_INDEX = 36;
-	TREE_LEVEL = 0;
-}
-
-DISPLAY_LINE
-{
-	CHANNEL = "_spi_falling_edge";
-	EXPAND_STATUS = COLLAPSED;
-	RADIX = Binary;
-	TREE_INDEX = 37;
+	TREE_INDEX = 31;
 	TREE_LEVEL = 0;
 }
 
@@ -1516,7 +1343,7 @@ DISPLAY_LINE
 	CHANNEL = "_spi_rising_edge";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
-	TREE_INDEX = 38;
+	TREE_INDEX = 32;
 	TREE_LEVEL = 0;
 }
 
@@ -1525,9 +1352,9 @@ DISPLAY_LINE
 	CHANNEL = "_spi_sub_counter";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Unsigned;
-	TREE_INDEX = 39;
+	TREE_INDEX = 33;
 	TREE_LEVEL = 0;
-	CHILDREN = 40, 41, 42, 43, 44, 45, 46, 47, 48;
+	CHILDREN = 34, 35, 36, 37, 38, 39, 40, 41, 42;
 }
 
 DISPLAY_LINE
@@ -1535,9 +1362,9 @@ DISPLAY_LINE
 	CHANNEL = "_spi_sub_counter[8]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Unsigned;
-	TREE_INDEX = 40;
+	TREE_INDEX = 34;
 	TREE_LEVEL = 1;
-	PARENT = 39;
+	PARENT = 33;
 }
 
 DISPLAY_LINE
@@ -1545,9 +1372,9 @@ DISPLAY_LINE
 	CHANNEL = "_spi_sub_counter[7]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Unsigned;
-	TREE_INDEX = 41;
+	TREE_INDEX = 35;
 	TREE_LEVEL = 1;
-	PARENT = 39;
+	PARENT = 33;
 }
 
 DISPLAY_LINE
@@ -1555,9 +1382,9 @@ DISPLAY_LINE
 	CHANNEL = "_spi_sub_counter[6]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Unsigned;
-	TREE_INDEX = 42;
+	TREE_INDEX = 36;
 	TREE_LEVEL = 1;
-	PARENT = 39;
+	PARENT = 33;
 }
 
 DISPLAY_LINE
@@ -1565,9 +1392,9 @@ DISPLAY_LINE
 	CHANNEL = "_spi_sub_counter[5]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Unsigned;
-	TREE_INDEX = 43;
+	TREE_INDEX = 37;
 	TREE_LEVEL = 1;
-	PARENT = 39;
+	PARENT = 33;
 }
 
 DISPLAY_LINE
@@ -1575,9 +1402,9 @@ DISPLAY_LINE
 	CHANNEL = "_spi_sub_counter[4]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Unsigned;
-	TREE_INDEX = 44;
+	TREE_INDEX = 38;
 	TREE_LEVEL = 1;
-	PARENT = 39;
+	PARENT = 33;
 }
 
 DISPLAY_LINE
@@ -1585,9 +1412,9 @@ DISPLAY_LINE
 	CHANNEL = "_spi_sub_counter[3]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Unsigned;
-	TREE_INDEX = 45;
+	TREE_INDEX = 39;
 	TREE_LEVEL = 1;
-	PARENT = 39;
+	PARENT = 33;
 }
 
 DISPLAY_LINE
@@ -1595,9 +1422,9 @@ DISPLAY_LINE
 	CHANNEL = "_spi_sub_counter[2]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Unsigned;
-	TREE_INDEX = 46;
+	TREE_INDEX = 40;
 	TREE_LEVEL = 1;
-	PARENT = 39;
+	PARENT = 33;
 }
 
 DISPLAY_LINE
@@ -1605,9 +1432,9 @@ DISPLAY_LINE
 	CHANNEL = "_spi_sub_counter[1]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Unsigned;
-	TREE_INDEX = 47;
+	TREE_INDEX = 41;
 	TREE_LEVEL = 1;
-	PARENT = 39;
+	PARENT = 33;
 }
 
 DISPLAY_LINE
@@ -1615,9 +1442,9 @@ DISPLAY_LINE
 	CHANNEL = "_spi_sub_counter[0]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Unsigned;
-	TREE_INDEX = 48;
+	TREE_INDEX = 42;
 	TREE_LEVEL = 1;
-	PARENT = 39;
+	PARENT = 33;
 }
 
 DISPLAY_LINE
@@ -1625,9 +1452,9 @@ DISPLAY_LINE
 	CHANNEL = "_spi_clock_counter";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Unsigned;
-	TREE_INDEX = 49;
+	TREE_INDEX = 43;
 	TREE_LEVEL = 0;
-	CHILDREN = 50, 51, 52, 53;
+	CHILDREN = 44, 45, 46, 47;
 }
 
 DISPLAY_LINE
@@ -1635,9 +1462,9 @@ DISPLAY_LINE
 	CHANNEL = "_spi_clock_counter[3]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Unsigned;
-	TREE_INDEX = 50;
+	TREE_INDEX = 44;
 	TREE_LEVEL = 1;
-	PARENT = 49;
+	PARENT = 43;
 }
 
 DISPLAY_LINE
@@ -1645,9 +1472,9 @@ DISPLAY_LINE
 	CHANNEL = "_spi_clock_counter[2]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Unsigned;
-	TREE_INDEX = 51;
+	TREE_INDEX = 45;
 	TREE_LEVEL = 1;
-	PARENT = 49;
+	PARENT = 43;
 }
 
 DISPLAY_LINE
@@ -1655,9 +1482,9 @@ DISPLAY_LINE
 	CHANNEL = "_spi_clock_counter[1]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Unsigned;
-	TREE_INDEX = 52;
+	TREE_INDEX = 46;
 	TREE_LEVEL = 1;
-	PARENT = 49;
+	PARENT = 43;
 }
 
 DISPLAY_LINE
@@ -1665,9 +1492,9 @@ DISPLAY_LINE
 	CHANNEL = "_spi_clock_counter[0]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Unsigned;
-	TREE_INDEX = 53;
+	TREE_INDEX = 47;
 	TREE_LEVEL = 1;
-	PARENT = 49;
+	PARENT = 43;
 }
 
 TIME_BAR

@@ -17,7 +17,7 @@ module SPI_master #(
 
     /* Debug signals */
 `ifdef DEBUG_SPI_MASTER
-    , _spi_falling_edge, _spi_rising_edge, _spi_clock_counter, _spi_done, _spi_sub_counter, _spi_fsm
+    , _spi_rising_edge, _spi_clock_counter, _spi_done, _spi_sub_counter, _spi_fsm
 `endif
 );
 
@@ -28,11 +28,10 @@ module SPI_master #(
 localparam FSM_STATES = 2;
 localparam FSM_IDLE   = 0;
 localparam FSM_START  = 1;
-localparam PSCLR_BITS              = SPI_PSCLR_OPTS_COUNT;
 localparam FSM_BITS                = $clog2(FSM_STATES);
-localparam CLOCK_COUNTER_RELOAD    = (2*SPI_PACKET_SIZE-1);
+localparam CLOCK_COUNTER_RELOAD    = 2*SPI_PACKET_SIZE-1;
 localparam COUNTER_BITS            = $clog2(CLOCK_COUNTER_RELOAD);
-localparam BITCOUNTER_BITS         = (COUNTER_BITS-1);
+localparam BITCOUNTER_BITS         = COUNTER_BITS-1;
 localparam SUB_COUNTER_BITS        = $clog2(1<<(SPI_PSCLR_MAX+2)-1);
 
 /* Ports definition */
@@ -42,7 +41,7 @@ input spi_miso;
 input req;
 input tx_en;
 input [SPI_PACKET_SIZE-1:0] data_tx;
-input [PSCLR_BITS-1:0] prescaler;
+input [SPI_PSCLR_BITS-1:0] prescaler;
 
 output wire spi_mosi;
 output wire spi_clk;
@@ -51,7 +50,6 @@ output wire [SPI_PACKET_SIZE-1:0] data_rx;
 
 /* Internal registers */
 reg spi_rising_edge;
-reg spi_falling_edge;
 reg tx_en_;
 reg spi_clk_en;
 reg rx_buf_sel;
@@ -59,7 +57,7 @@ reg rx_buf_sel;
 reg [SPI_PACKET_SIZE-1:0]  tx_buffer;
 reg [SPI_PACKET_SIZE-1:0]  rx_buffer[1:0];
 reg [FSM_BITS-1:0]         state;
-reg [PSCLR_BITS-1:0]       prescaler_;
+reg [SPI_PSCLR_BITS-1:0]   prescaler_;
 reg [COUNTER_BITS-1:0]     clock_counter;
 reg [SUB_COUNTER_BITS-1:0] sub_counter;
 
@@ -68,11 +66,10 @@ wire [BITCOUNTER_BITS-1:0]  bit_counter;
 wire [SUB_COUNTER_BITS-1:0] sub_counter_cap;
 wire done;
 
-/* Internal assignements */
+/* Internal assignments */
 assign spi_mosi = (spi_clk_en & tx_en_) ? tx_buffer[bit_counter] : SPI_MOSI_IDLE;
 assign spi_clk = SPI_CPOL ^ (spi_clk_en && (SPI_CPHA ^ !clock_counter[0]));
 assign data_rx = rx_buffer[rx_buf_sel];
-
 
 assign busy = !(state == FSM_IDLE);
 assign done = (clock_counter == 0) && (sub_counter == sub_counter_cap);
@@ -122,18 +119,16 @@ always @ (posedge clk) begin
             clock_counter <= clock_counter - 1'd1;
 
         spi_rising_edge  <= (sub_counter + 1'd1 == sub_counter_cap) ?  clock_counter[0] : 1'd0;
-        spi_falling_edge <= (sub_counter + 1'd1 == sub_counter_cap) ? !clock_counter[0] : 1'd0;
     end
-    else begin // resetting both counters
+    else begin /* resetting both counters */
         clock_counter <= CLOCK_COUNTER_RELOAD[COUNTER_BITS-1:0];
         sub_counter <= 0;
         spi_rising_edge <= 0;
-        spi_falling_edge <= 0;
     end
 end
 
 /* Prescaler selection table */
-function [SUB_COUNTER_BITS-1:0] decode_prescaler(input [PSCLR_BITS-1:0] prescaler);
+function [SUB_COUNTER_BITS-1:0] decode_prescaler(input [SPI_PSCLR_BITS-1:0] prescaler);
     case (prescaler)
     SPI_PSCLR_DIV4:      decode_prescaler = 1; 
     SPI_PSCLR_DIV8:      decode_prescaler = 3; 
@@ -143,21 +138,19 @@ function [SUB_COUNTER_BITS-1:0] decode_prescaler(input [PSCLR_BITS-1:0] prescale
     SPI_PSCLR_DIV128:    decode_prescaler = 63; 
     SPI_PSCLR_DIV256:    decode_prescaler = 127; 
     SPI_PSCLR_DIV512:    decode_prescaler = 255;
-    default:
     SPI_PSCLR_DIV1024:   decode_prescaler = 511;
+    default:             decode_prescaler = 511;
     endcase
 endfunction
 
 /* Route out internal signals for debugging & validation */
 `ifdef DEBUG_SPI_MASTER
-output wire _spi_falling_edge;
 output wire _spi_rising_edge;
 output wire [COUNTER_BITS-1:0] _spi_clock_counter;
 output wire [SUB_COUNTER_BITS-1:0] _spi_sub_counter;
 output wire _spi_done;
 output wire [FSM_BITS-1:0] _spi_fsm;
 
-assign _spi_falling_edge = spi_falling_edge;
 assign _spi_rising_edge = spi_rising_edge;
 assign _spi_clock_counter = clock_counter;
 assign _spi_done = done;

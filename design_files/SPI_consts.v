@@ -14,5 +14,7 @@ localparam SPI_PSCLR_DIV256   = 6;
 localparam SPI_PSCLR_DIV512   = 7;
 localparam SPI_PSCLR_DIV1024  = 8;
 
-localparam SPI_PSCLR_MAX = SPI_PSCLR_DIV1024;
+localparam SPI_PSCLR_MAX        = SPI_PSCLR_DIV1024;
 localparam SPI_PSCLR_OPTS_COUNT = 9; /* number of supported values */
+localparam SPI_PSCLR_BITS       = $clog2(SPI_PSCLR_OPTS_COUNT);
+
