@@ -52,13 +52,9 @@ assign LEDG[2] = sd_configured & !error_no_fat_found; /* no fat found valid only
 assign LEDG[1] = block_read_card_ready;
 assign LEDG[0] = sd_configured;
 
-//assign block_read_trigger = !KEY[2];
-//assign block_read_continous_mode = SW[0];
-//assign block_read_block_addr = 32'h00000000;
-
 MAIN_PLL main_pll(
     .inclk0(CLOCK_50),
-    .c0(clk)
+    .c0(clk) /* Set clk to 200 MHz */
 );
 
 SDCard_reader sd_card (
