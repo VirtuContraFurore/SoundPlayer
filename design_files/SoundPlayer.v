@@ -1,9 +1,17 @@
 module SoundPlayer(
     CLOCK_50,
-    KEY, SW,
-    LEDR, LEDG,
-    GPIO_0, GPIO_1,
-    SD_DO, SD_DI, SD_SCLOCK, SD_CS
+    
+    KEY,
+    SW,
+    LEDR,
+    LEDG,
+    GPIO_0,
+    GPIO_1,
+    
+    SD_DO,
+    SD_DI,
+    SD_SCLOCK,
+    SD_CS
 );
 
 /* Ports definition */
@@ -53,6 +61,13 @@ assign GPIO_0[4] = block_read_trigger;
 assign LEDG[2] = sd_configured & !error_no_fat_found; /* no fat found valid only if card configured */
 assign LEDG[1] = block_read_card_ready;
 assign LEDG[0] = sd_configured;
+
+/*
+CODEC_PLL codec_pll(
+    .inclk0(CLOCK_50),
+    .c0(AUD_XCK) // 18.432 MHz MCLK clock 
+);
+*/
 
 MAIN_PLL main_pll(
     .inclk0(CLOCK_50),
