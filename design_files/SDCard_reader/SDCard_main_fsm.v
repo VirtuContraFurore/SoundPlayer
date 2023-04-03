@@ -118,7 +118,7 @@ always @ (posedge clk) begin
     FSM_CONFIGURING_CARD_8:  fsm_state <= (R0[0] == 0) ? FSM_CONFIGURING_CARD_9 : FSM_CONFIGURING_CARD_6;
     FSM_CONFIGURING_CARD_9: `SEND_CMD(CMD58, FSM_CONFIGURING_CARD_10)
     FSM_CONFIGURING_CARD_10: begin 
-        spi_prescaler <= SPI_PSCLR_DIV8;
+        spi_prescaler <= `SDCARD_MISSION_MODE_PSCLR;
         card_configured <= 1;
         fsm_state <= FSM_CARD_READY;
     end
@@ -160,6 +160,7 @@ always @ (posedge clk) begin
         end
     end
     FSM_CARD_BUSY_CRC_1: begin /* eat 2 crc bytes */
+        block_read_data_new_flag <= 0;
         spi_req <= 1;
         fsm_state <= (spi_ready) ? fsm_state : FSM_CARD_BUSY_CRC_2;
     end

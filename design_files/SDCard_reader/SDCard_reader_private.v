@@ -3,6 +3,17 @@
  * This file must NOT be compiled alone!
  * For this file, set Properties... -> Type to 'Macro File'
  */
+ 
+/* Misc */
+localparam SPI_SIZE = 4'd8;
+localparam RESET_PULSES = 80;
+
+localparam CARD_CMD_BYTES        = 6;  /* Lenght of SD command in bytes */
+localparam CMD_SEND_COUNTER_BITS = $clog2(CARD_CMD_BYTES);
+
+localparam CMD_MAX_RESP_BYTES    = 5;
+localparam CMD_RESP_BITS         = CMD_MAX_RESP_BYTES*8;
+localparam CMD_RESP_COUNTER_BITS = $clog2(CMD_MAX_RESP_BYTES);
 
 /* Main FSM States */
 localparam FSM_CARD_NOT_READY      = 0;
@@ -56,17 +67,6 @@ localparam CMD58     = 7;
 localparam ACMD41    = 8;
 localparam CMD_COUNT = 9; /* number of cmd */
 localparam CMD_BITS  = $clog2(CMD_COUNT);
-
-/* Other params */
-localparam SPI_SIZE = 4'd8;
-localparam RESET_PULSES = 80;
-
-localparam CARD_CMD_BYTES        = 6;   /* Lenght of SD command in bytes */
-localparam CMD_SEND_COUNTER_BITS = $clog2(CARD_CMD_BYTES);
-
-localparam CMD_MAX_RESP_BYTES    = 5;
-localparam CMD_RESP_BITS         = CMD_MAX_RESP_BYTES*8;
-localparam CMD_RESP_COUNTER_BITS = $clog2(CMD_MAX_RESP_BYTES);
 
 
 

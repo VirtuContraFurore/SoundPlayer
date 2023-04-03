@@ -20,9 +20,6 @@ module SDCard_reader(
     block_read_data_out,
     block_read_data_idx,
     block_read_data_new_flag
-    
-    /* Debug singnals */
-    //debug_bus, debug_ctrl
 );
 
 /* Local params */
