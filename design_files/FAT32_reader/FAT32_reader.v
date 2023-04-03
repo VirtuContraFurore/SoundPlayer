@@ -115,7 +115,7 @@ assign wav_chunk_ok = (wav_file_chunk_id[0] == "R") && (wav_file_chunk_id[1] == 
                       (wav_file_format[2] == "V") && (wav_file_format[3] == "E") &&
                       (wav_file_subchunk1_id[0] == "f") && (wav_file_subchunk1_id[1] == "m") &&
                       (wav_file_subchunk1_id[2] == "t") && (wav_file_subchunk1_id[3] == " ");
-assign wav_channels_ok = wav_num_channels == 1;
+assign wav_channels_ok = wav_num_channels == 1; // || wav_num_channels == 2; // TODO: future improvement
 assign wav_audio_format_ok = wav_audio_format == 1;
 assign wav_sample_rate_ok = wav_sample_rate == 32'd44100;
 assign wav_data_chunk_ok = (wav_file_subchunk2_id[0] == "d") && (wav_file_subchunk2_id[1] == "a") &&
