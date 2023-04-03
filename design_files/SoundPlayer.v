@@ -40,7 +40,6 @@ wire block_read_data_new_flag;
 wire error_no_fat_found;
 
 /* Internal assignments */
-assign clk = CLOCK_50;
 assign rst_n = KEY[3];
 
 assign GPIO_0[0] = SD_SCLOCK;
@@ -56,6 +55,11 @@ assign LEDG[0] = sd_configured;
 //assign block_read_trigger = !KEY[2];
 //assign block_read_continous_mode = SW[0];
 //assign block_read_block_addr = 32'h00000000;
+
+MAIN_PLL main_pll(
+    .inclk0(CLOCK_50),
+    .c0(clk)
+);
 
 SDCard_reader sd_card (
     .clk(clk),

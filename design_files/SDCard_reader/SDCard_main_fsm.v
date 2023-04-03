@@ -72,13 +72,6 @@ assign R0 = cmd_response_bytes[7:0];
 /* Macro used inside the state machine */
 `define SEND_CMD(command, next_state) begin cmd_req_idx <= (command); linked_state <= (next_state); fsm_state <= FSM_RUN_CMD_0; end
 
-/* Macro to select init prescaler */
-`ifdef DEBUG_SDCARD_READER
-`define STARTUP_PRESCALER SPI_PSCLR_DIV4
-`else
-`define STARTUP_PRESCALER SPI_PSCLR_DIV256
-`endif
-
 /* Main Finite State Machine */
 always @ (posedge clk) begin
     if(!rst_n) begin
