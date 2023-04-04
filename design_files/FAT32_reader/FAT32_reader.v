@@ -246,16 +246,22 @@ always @(posedge clk) begin
                 dir_entry_idx <= 0;
                 fsm_state <= FSM_PARSE_FILE_ENTRY_0;
             end else begin
-                dir_entry_idx = (dir_entry_idx != (dir_entry_idx_max - 1'b1)) ? dir_entry_idx + 1'b1: 0;
+                audio_buffer_addr_o = BUFFER_SIZE_BYTES-1; /* Reset audio buffer address */
+                sector_count <= 0;
+                dir_entry_idx = (dir_entry_idx < (dir_entry_idx_max - 1'b1)) ? dir_entry_idx + 1'b1: 0;
                 fsm_state = (file_good) ? FSM_PARSE_WAV_FILE_0 : FSM_PARSE_FILE_ENTRY_0;
             end
         end
-    end
+    end /* TODO: parse all root and not only first cluster (which is still 512 entries ~ 128 files, since each file uses 2 to 3 extra entries for storing full file name) */
     
     /* Parse WAV file */
     FSM_PARSE_WAV_FILE_0: `READ_MULTI_SECT( `CLUSTER_ADDR(file_first_cluster), FSM_PARSE_WAV_FILE_1)
     FSM_PARSE_WAV_FILE_1: begin
         if(card_new_data) begin
+            audio_buffer_addr_o <= audio_buffer_addr_o + 1'b1;
+            audio_buffer_data_o <= 0;
+            audio_buffer_wren_o <= 1'b1;
+        
             case(card_data_idx)
             9'h00: wav_file_chunk_id[0] = card_data;
             9'h01: wav_file_chunk_id[1] = card_data;
@@ -293,23 +299,39 @@ always @(posedge clk) begin
                             fsm_state <= FSM_PARSE_WAV_FILE_7;
                    end
             endcase
-        end
+        end else
+            audio_buffer_wren_o <= 0; /* do not write buffer if new byte hasn't arrived */
     end
     FSM_PARSE_WAV_FILE_2:  begin
         if(card_new_data) begin
+            audio_buffer_addr_o <= audio_buffer_addr_o + 1'b1;
+            audio_buffer_wren_o <= 1'b1;
+        
             if(wav_byte_counter < wav_file_subchunk2_size) begin
-                /* TODO: Put card_data in buffer if empty and signal data to buffer */
+                audio_buffer_data_o <= card_data;
                 wav_byte_counter = wav_byte_counter + 1'b1;
-            end
+            end else 
+                 audio_buffer_data_o <= 0; /* fill with zero if audio file is ended to flush last part of buffer */
             
             if(card_data_idx == SD_LAST_BLOCK_BYTE) begin
+                card_req <= ((sector_count  + 1'b1) < fat32_sectors_per_cluster) &&
+                            ((audio_buffer_addr_o + 1'b1) < (BUFFER_SIZE_BYTES-1)); /* Keep card_req high only if buffer not full */
+                            
                 sector_count <= sector_count + 1'b1;
-                card_req <= (sector_count  + 1'b1) < fat32_sectors_per_cluster;
             end
-        end
+        end else
+            audio_buffer_wren_o <= 0; /* do not write buffer if new byte hasn't arrived */
         
-        if(card_ready && (sector_count == fat32_sectors_per_cluster))
-            fsm_state <= FSM_PARSE_WAV_FILE_3;
+        if(card_ready) begin
+            /* Signal buffer is full */
+            if(audio_buffer_addr_o == (BUFFER_SIZE_BYTES-1))
+                audio_buffer_filled_o <= 1'b1;
+            
+            if(sector_count == fat32_sectors_per_cluster)
+                fsm_state <= FSM_PARSE_WAV_FILE_3; /* Note: if this is last cluster and buffer is not full it won't be played */
+            else if(audio_buffer_addr_o == (BUFFER_SIZE_BYTES-1))
+                fsm_state <= FSM_PARSE_WAV_FILE_8;
+        end
     end
     FSM_PARSE_WAV_FILE_3: begin
         `READ_SINGLE_SECT( `FAT_TABLE_ADDR(file_current_cluster), FSM_PARSE_WAV_FILE_4)
@@ -325,6 +347,7 @@ always @(posedge clk) begin
             endcase
         end
         if(card_ready) begin
+            sector_count <= 0; /* Reset sector count before starting a new cluster read */
             file_current_cluster = file_current_cluster & FAT32_CLUSTER_MASK; /* Clear highest nibble since it must be ignored */
             if((file_current_cluster & FAT32_LAST_CLUSTER_MASK) == FAT32_LAST_CLUSTER_MASK)
                 fsm_state <= FSM_PARSE_WAV_FILE_5;
@@ -340,6 +363,10 @@ always @(posedge clk) begin
         card_single <= 1;
         card_req <= 0;
         fsm_state <= (card_ready) ? FSM_PARSE_FILE_ENTRY_0 : fsm_state; /* Skip this file and go to next file entry */
+    end
+    FSM_PARSE_WAV_FILE_8: begin /* Wait for buffer */
+        if(audio_buffer_empty_i)
+            `READ_MULTI_SECT( `CLUSTER_ADDR(file_current_cluster) + sector_count, FSM_PARSE_WAV_FILE_2) /* Resume cluster reading from the sector we left with */
     end
     endcase
 end
