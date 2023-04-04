@@ -10,13 +10,26 @@ module FAT32_reader(
     block_read_data_idx,
     block_read_data_new_flag,
     
+    /* Buffer interface */
+    audio_buffer_addr_o,
+    audio_buffer_wren_o,
+    audio_buffer_data_o,
+    audio_buffer_filled_o,
+    audio_buffer_empty_i,
+        
+    /* WAV info interface */
+    wav_info_sampling_rate,
+    wav_info_audio_channels,
+    
     /* Status */
     error_no_fat_found
 );
 
 /* Parameters */
-`include "../SDCard_reader/SDCard_reader_consts.v"
+`include "../globals.v"
 `include "FAT32_reader_private.v"
+`include "../SDCard_reader/SDCard_reader_consts.v"
+`include "../buffer_consts.v"
 
 /* Ports definition */
 input clk;
@@ -30,6 +43,15 @@ output wire block_read_trigger;
 output wire block_read_continous_mode;
 output wire [SD_BLOCK_ADDR_BITS-1:0] block_read_block_addr;
 output wire error_no_fat_found;
+
+input audio_buffer_empty_i;
+output reg [8:0] audio_buffer_data_o = 0;
+output reg [BUFFER_ADDR_BITS-1:0] audio_buffer_addr_o = 0;
+output reg audio_buffer_wren_o = 0;
+output reg audio_buffer_filled_o = 0;
+
+output wire [31:0] wav_info_sampling_rate;
+output wire [ 7:0] wav_info_audio_channels;
 
 /* Private regs */
 reg [FSM_BITS-1:0] fsm_state = 0;
