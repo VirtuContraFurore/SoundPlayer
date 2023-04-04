@@ -137,12 +137,14 @@ assign wav_chunk_ok = (wav_file_chunk_id[0] == "R") && (wav_file_chunk_id[1] == 
                       (wav_file_format[2] == "V") && (wav_file_format[3] == "E") &&
                       (wav_file_subchunk1_id[0] == "f") && (wav_file_subchunk1_id[1] == "m") &&
                       (wav_file_subchunk1_id[2] == "t") && (wav_file_subchunk1_id[3] == " ");
-assign wav_channels_ok = wav_num_channels == 1; // || wav_num_channels == 2; // TODO: future improvement
+assign wav_channels_ok = wav_num_channels == 1 || wav_num_channels == 2;
 assign wav_audio_format_ok = wav_audio_format == 1;
 assign wav_sample_rate_ok = wav_sample_rate == 32'd44100;
 assign wav_data_chunk_ok = (wav_file_subchunk2_id[0] == "d") && (wav_file_subchunk2_id[1] == "a") &&
                            (wav_file_subchunk2_id[2] == "t") && (wav_file_subchunk2_id[3] == "a");
-
+                           
+assign wav_info_audio_channels = wav_num_channels;
+assign wav_info_sampling_rate = wav_sample_rate;
                    
 /* Compute address of a given cluster */
 `define CLUSTER_ADDR(cluster) (fat32_data_region_start + (((cluster)-2) << highest_bit(fat32_sectors_per_cluster)))
