@@ -29,7 +29,10 @@ output wire SD_CS;
 output [17:0] LEDR;
 output [7:0] LEDG;
 
+/* Parameters */
+`include "globals.v"
 `include "SDCard_reader/SDCard_reader_consts.v"
+`include "buffer_consts.v"
 
 /* Internal wires */
 wire clk;
@@ -47,6 +50,19 @@ wire block_read_data_new_flag;
 
 wire error_no_fat_found;
 
+wire ram_wren;
+wire [7:0] ram_wr_data;
+wire [7:0] ram_rd_data;
+wire [RAM_ADDR_BITS-1:0] ram_wr_address;
+wire [RAM_ADDR_BITS-1:0] ram_rd_address;
+
+wire buffer_active_sel;
+wire [BUFFER_ADDR_BITS-1:0] buffer_wr_address;
+wire [BUFFER_ADDR_BITS-1:0] buffer_rd_address;
+
+wire audio_buffer_empty;
+wire audio_buffer_filled;
+
 /* Internal assignments */
 assign rst_n = KEY[3];
 
@@ -62,6 +78,12 @@ assign LEDG[2] = sd_configured & !error_no_fat_found; /* no fat found valid only
 assign LEDG[1] = block_read_card_ready;
 assign LEDG[0] = sd_configured;
 
+/* Double buffer and RAM address translation */
+assign ram_rd_address[BUFFER_ADDR_BITS-1:0] = buffer_rd_address;
+assign ram_wr_address[BUFFER_ADDR_BITS-1:0] = buffer_wr_address;
+assign ram_rd_address[BUFFER_ADDR_BITS] = buffer_active_sel;
+assign ram_wr_address[BUFFER_ADDR_BITS] = !buffer_active_sel;
+
 /*
 CODEC_PLL codec_pll(
     .inclk0(CLOCK_50),
@@ -72,6 +94,15 @@ CODEC_PLL codec_pll(
 MAIN_PLL main_pll(
     .inclk0(CLOCK_50),
     .c0(clk) /* Set clk to 200 MHz */
+);
+
+RAM_dualport ram_dualport (
+	.clock(!clk), /* RAM writes on rising edge, so change it to falling */
+	.data(ram_wr_data),
+	.rdaddress(ram_rd_address),
+	.wraddress(ram_wr_address),
+	.wren(ram_wren),
+	.q(ram_rd_data)
 );
 
 SDCard_reader sd_card (
@@ -110,7 +141,14 @@ FAT32_reader fat32_reader (
     .block_read_data_new_flag(block_read_data_new_flag),
     
     /* Status */
-    .error_no_fat_found(error_no_fat_found)
+    .error_no_fat_found(error_no_fat_found),
+    
+    /* Buffer interface */
+    .audio_buffer_addr_o(buffer_wr_address),
+    .audio_buffer_wren_o(ram_wren),
+    .audio_buffer_data_o(ram_wr_data),
+    .audio_buffer_filled_o(audio_buffer_filled),
+    .audio_buffer_empty_i(audio_buffer_empty)
 );
 
 endmodule
