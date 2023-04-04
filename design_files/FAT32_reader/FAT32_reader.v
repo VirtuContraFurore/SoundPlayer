@@ -159,7 +159,7 @@ assign wav_info_sampling_rate = wav_sample_rate;
 `define READ_SINGLE_SECT(sect_addr, next_state) begin card_req <= card_ready; card_addr <= (sect_addr); card_single <= 1'b1; fsm_state <= (card_ready) ? fsm_state : (next_state); end
 
 /* Macro to read a sequetial FAT sector (which is equal to an SD sector for our purposes) */
-`define READ_MULTI_SECT(sect_addr, next_state) begin card_req <= 1'b1; card_addr <= (sect_addr); card_single <=1'b0; fsm_state <= (card_ready) ? fsm_state : (next_state); sector_count <= 0; end
+`define READ_MULTI_SECT(sect_addr, next_state) begin card_req <= 1'b1; card_addr <= (sect_addr); card_single <=1'b0; fsm_state <= (card_ready) ? fsm_state : (next_state); end
 
 always @(posedge clk) begin
     if(!rst_n) begin
