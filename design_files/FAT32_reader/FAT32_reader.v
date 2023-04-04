@@ -365,8 +365,10 @@ always @(posedge clk) begin
         fsm_state <= (card_ready) ? FSM_PARSE_FILE_ENTRY_0 : fsm_state; /* Skip this file and go to next file entry */
     end
     FSM_PARSE_WAV_FILE_8: begin /* Wait for buffer */
-        if(audio_buffer_empty_i)
+        if(audio_buffer_empty_i) begin
+            audio_buffer_filled_o<= 0; /* Clear buffer filled flag */
             `READ_MULTI_SECT( `CLUSTER_ADDR(file_current_cluster) + sector_count, FSM_PARSE_WAV_FILE_2) /* Resume cluster reading from the sector we left with */
+        end
     end
     endcase
 end
