@@ -87,7 +87,7 @@ assign ram_wr_address[BUFFER_ADDR_BITS] = !buffer_active_sel;
 /*
 CODEC_PLL codec_pll(
     .inclk0(CLOCK_50),
-    .c0(AUD_XCK) // 11.2896 MCLK clock 
+    .c0(AUD_XCK) // 18.432 MHz MCLK clock 
 );
 */
 
