@@ -65,6 +65,7 @@ wire audio_buffer_filled;
 
 /* Internal assignments */
 assign rst_n = KEY[3];
+assign audio_buffer_empty = 1'b1;
 
 /* Logic Analyzer debug routing */
 assign GPIO_0[0] = SD_SCLOCK;
