@@ -3,8 +3,8 @@ module I2C_Controller (
 	I2C_SCLK, //I2C CLOCK
  	I2C_SDAT, //I2C DATA
 	I2C_DATA, //DATA:[SLAVE_ADDR,SUB_ADDR,DATA]
-	GO,       //GO transfor
-	END,      //END transfor 
+	GO,       //GO transfer
+	END,      //END transfer 
 	ACK,      //ACK
 	RESET
 );
@@ -13,37 +13,32 @@ input  [23:0]I2C_DATA;
 input  GO;
 input  RESET;	
 inout  I2C_SDAT;	
-output I2C_SCLK;
-output END;	
-output ACK;
+output wire I2C_SCLK;
+output reg END;	
+output wire ACK;
 
 /* Internal wires */
-wire I2C_SCLK;
-wire I2C_DATA;
-wire ACK;
 
 /* Internal regs */
 reg SDO;
 reg SCLK;
-reg END;
-reg [23:0]SD;
-reg [ 5:0]SD_COUNTER;
+reg [23:0] SD = 24'h34fefe;
+reg [ 5:0] SD_COUNTER;
 reg ACK1, ACK2, ACK3;
 
 /* Internal assignments */
 assign I2C_SCLK = SCLK | ( ((SD_COUNTER >= 4) && (SD_COUNTER <=30))? ~CLOCK : 1'b0 );
-assign I2C_SDAT = SDO ? 1'bz : 1'b0 ;
-assign ACK = ACK1 | ACK2 | ACK3;
+assign I2C_SDAT = SDO ? 1'bZ : 1'b0 ;
 assign ACK = ACK1 | ACK2 | ACK3;
 
 always @(negedge RESET or posedge CLOCK ) begin
-    if (!RESET)
+    if (!RESET) begin
         SD_COUNTER=6'b111111;
-    else begin
-        if (GO==0) 
-            SD_COUNTER=0;             
-        else if (SD_COUNTER < 6'b111111)
-            SD_COUNTER=SD_COUNTER+6'd1;	
+    end else begin
+        if (!GO) begin
+            SD_COUNTER <=0;
+        end else if (SD_COUNTER < 6'b111111)
+            SD_COUNTER <= SD_COUNTER+6'd1;	
     end
 end
 
@@ -56,11 +51,11 @@ always @(negedge RESET or  posedge CLOCK ) begin
         ACK3=0; 
         END=1; 
     end else case (SD_COUNTER)
-        6'd0  : begin ACK1=0; ACK2=0; ACK3=0; END=0; SDO=1; SCLK=1; end
+        6'd0  : begin ACK1 = 0; ACK2 = 0; ACK3 = 0; END = 0; SDO = 1; SCLK = 1; SD = I2C_DATA; end
         
         //START
-        6'd1  : begin SD=I2C_DATA; SDO=0; end
-        6'd2  : SCLK=0;
+        6'd1  : begin SDO = 0; end
+        6'd2  : SCLK = 0;
         
         //SLAVE ADDR
         6'd3  : SDO=SD[23];

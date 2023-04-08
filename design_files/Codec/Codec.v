@@ -52,5 +52,11 @@ input wire [31:0] wav_info_sampling_rate_i;
 /* Private regs */
 
 /* Private instances */
+Codec_config conf (
+    .clk(clk),
+    .rst_n(rst_n),
+    .i2c_sclk(codec_i2c_sclk_o),
+    .i2c_sdat(codec_i2c_sdat_io)
+);
 
 endmodule

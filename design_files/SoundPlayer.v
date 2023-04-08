@@ -96,6 +96,8 @@ assign GPIO_0[2] = SD_DI;
 assign GPIO_0[3] = SD_CS;
 assign GPIO_0[4] = block_read_trigger;
 assign GPIO_0[5] = audio_buffer_filled;
+assign GPIO_0[6] = I2C_SCLK;
+assign GPIO_0[7] = I2C_SDAT;
 
 /* Status LED */
 assign LEDG[2] = sd_configured & !error_no_fat_found; /* no fat found flag valid only if card configured */
