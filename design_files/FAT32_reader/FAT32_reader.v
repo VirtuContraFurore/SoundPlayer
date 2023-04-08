@@ -328,11 +328,12 @@ always @(posedge clk) begin
             end
         end
     end
-    FSM_PARSE_WAV_FILE_3: begin
+    /* Find next cluster in file allocation table chain */
+    FSM_PARSE_WAV_FILE_3: begin  /* Request file allocation table sector */
         `READ_SINGLE_SECT( `FAT_TABLE_ADDR(file_current_cluster), FSM_PARSE_WAV_FILE_4)
-        file_current_cluster_index <= file_current_cluster << 2;
+        file_current_cluster_index <= file_current_cluster << 2; /* index = cluster * 4, each cluster entry has 4 bytes */
         end
-    FSM_PARSE_WAV_FILE_4: begin
+    FSM_PARSE_WAV_FILE_4: begin /* Parse file allocation table entry */
         if(card_new_data) begin
             case (card_data_idx)
             file_current_cluster_index + 9'h00: file_current_cluster[ 7: 0] = card_data;
