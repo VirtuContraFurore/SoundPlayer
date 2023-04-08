@@ -319,13 +319,13 @@ always @(posedge clk) begin
         
         if(card_ready) begin
             /* Signal buffer is full */
-            if(audio_buffer_addr_o == (BUFFER_SIZE_BYTES-1))
+            if(audio_buffer_addr_o == (BUFFER_SIZE_BYTES-1)) begin
                 audio_buffer_filled_o <= 1'b1;
-            
-            if(sector_count == fat32_sectors_per_cluster)
-                fsm_state <= FSM_PARSE_WAV_FILE_3; /* Note: if this is last cluster and buffer is not full it won't be played */
-            else if(audio_buffer_addr_o == (BUFFER_SIZE_BYTES-1))
                 fsm_state <= FSM_PARSE_WAV_FILE_8;
+            end 
+            else if(sector_count == fat32_sectors_per_cluster) begin
+                fsm_state <= FSM_PARSE_WAV_FILE_3; /* Warning: if this is last cluster and buffer is not full it won't be played, need to flush buffer (zero fill last part) */
+            end
         end
     end
     FSM_PARSE_WAV_FILE_3: begin
@@ -362,7 +362,10 @@ always @(posedge clk) begin
     FSM_PARSE_WAV_FILE_8: begin /* Wait for buffer */
         if(audio_buffer_empty_i) begin
             audio_buffer_filled_o<= 0; /* Clear buffer filled flag */
-            `READ_MULTI_SECT( `CLUSTER_ADDR(file_current_cluster) + sector_count, FSM_PARSE_WAV_FILE_2) /* Resume cluster reading from the sector we left with */
+            if(sector_count == fat32_sectors_per_cluster)
+                fsm_state <= FSM_PARSE_WAV_FILE_3;
+            else
+                `READ_MULTI_SECT( `CLUSTER_ADDR(file_current_cluster) + sector_count, FSM_PARSE_WAV_FILE_2) /* Resume cluster reading from the sector we left with */
         end
     end
     endcase
