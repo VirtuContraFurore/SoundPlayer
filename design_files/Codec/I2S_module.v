@@ -117,21 +117,6 @@ begin
 		WAIT: if(buffer_filled_i==1)STATUS<=READ; 											
 		READ:
 		    begin
-					////DEBUG-------------------------------------------	
-					//if(crusca==0 && idato==0)MEMORY2[15:0]<=buffer_data_in;
-					//else if(crusca==1 && idato==0)MEMORY2[31:16]<=buffer_data_in;
-					//else if(crusca==255 && idato==0)MEMORY2[47:32]<=buffer_data_in;
-					//else if(crusca==256 && idato==0)MEMORY2[63:48]<=buffer_data_in;
-					//else if(crusca==511 && idato==0)MEMORY2[79:64]<=buffer_data_in;
-					//else if(crusca==512 && idato==0)MEMORY2[95:80]<=buffer_data_in;
-					//else if(crusca==767 && idato==0)MEMORY2[111:96]<=buffer_data_in;
-					//else if(crusca==768 && idato==0)MEMORY2[127:112]<=buffer_data_in;
-					//else if(crusca==1023 && idato==0)MEMORY2[143:128]<=buffer_data_in;
-					//else if(crusca==1024 && idato==0)MEMORY2[159:144]<=buffer_data_in;
-					//else if(crusca==1279 && idato==0)MEMORY2[175:160]<=buffer_data_in;
-					//else if(crusca==1280 && idato==0)MEMORY2[191:176]<=buffer_data_in;
-					
-					//------------------------------------------------------------------
 					I2S_BCLK_en <= 0;
 					idato<=idato+32'd1;
 					if(idato==0)
