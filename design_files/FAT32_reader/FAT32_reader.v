@@ -257,11 +257,7 @@ always @(posedge clk) begin
     /* Parse WAV file */
     FSM_PARSE_WAV_FILE_0: `READ_MULTI_SECT( `CLUSTER_ADDR(file_first_cluster), FSM_PARSE_WAV_FILE_1)
     FSM_PARSE_WAV_FILE_1: begin
-        if(card_new_data) begin
-            audio_buffer_addr_o <= audio_buffer_addr_o + 1'b1;
-            audio_buffer_data_o <= 0;
-            audio_buffer_wren_o <= 1'b1;
-        
+        if(card_new_data) begin        
             case(card_data_idx)
             9'h00: wav_file_chunk_id[0] = card_data;
             9'h01: wav_file_chunk_id[1] = card_data;
@@ -299,19 +295,16 @@ always @(posedge clk) begin
                             fsm_state <= FSM_PARSE_WAV_FILE_7;
                    end
             endcase
-        end else
-            audio_buffer_wren_o <= 0; /* do not write buffer if new byte hasn't arrived */
+        end
+        
+        audio_buffer_data_o <= 0; /* fill buffer with 0 while parsing wav header (44 bytes of zeros = 22 or 11 samples depending on channel count) */
+        audio_buffer_addr_o <= (card_new_data) ? audio_buffer_addr_o + 1'b1 : audio_buffer_addr_o;
+        audio_buffer_wren_o <= card_new_data; /* do not write buffer if new byte hasn't arrived */
     end
     FSM_PARSE_WAV_FILE_2:  begin
         if(card_new_data) begin
-            audio_buffer_addr_o <= audio_buffer_addr_o + 1'b1;
-            audio_buffer_wren_o <= 1'b1;
-        
-            if(wav_byte_counter < wav_file_subchunk2_size) begin
-                audio_buffer_data_o <= card_data;
-                wav_byte_counter = wav_byte_counter + 1'b1;
-            end else 
-                 audio_buffer_data_o <= 0; /* fill with zero if audio file is ended to flush last part of buffer */
+            wav_byte_counter    = (wav_byte_counter < wav_file_subchunk2_size) ? wav_byte_counter + 1'b1 : wav_byte_counter;
+            audio_buffer_data_o = (wav_byte_counter < wav_file_subchunk2_size) ? card_data : 0;
             
             if(card_data_idx == SD_LAST_BLOCK_BYTE) begin
                 card_req <= ((sector_count  + 1'b1) < fat32_sectors_per_cluster) &&
@@ -319,8 +312,10 @@ always @(posedge clk) begin
                             
                 sector_count <= sector_count + 1'b1;
             end
-        end else
-            audio_buffer_wren_o <= 0; /* do not write buffer if new byte hasn't arrived */
+        end
+        
+        audio_buffer_addr_o <= (card_new_data) ? audio_buffer_addr_o + 1'b1 : audio_buffer_addr_o;
+        audio_buffer_wren_o <= card_new_data; /* do not write buffer if new byte hasn't arrived */
         
         if(card_ready) begin
             /* Signal buffer is full */
