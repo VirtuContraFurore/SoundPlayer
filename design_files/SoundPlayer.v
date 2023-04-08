@@ -72,9 +72,10 @@ assign GPIO_0[1] = SD_DO;
 assign GPIO_0[2] = SD_DI;
 assign GPIO_0[3] = SD_CS;
 assign GPIO_0[4] = block_read_trigger;
+assign GPIO_0[5] = audio_buffer_filled;
 
 /* Status LED */
-assign LEDG[2] = sd_configured & !error_no_fat_found; /* no fat found valid only if card configured */
+assign LEDG[2] = sd_configured & !error_no_fat_found; /* no fat found flag valid only if card configured */
 assign LEDG[1] = block_read_card_ready;
 assign LEDG[0] = sd_configured;
 
