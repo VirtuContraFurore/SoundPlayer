@@ -98,7 +98,7 @@ MAIN_PLL main_pll(
 );
 
 RAM_dualport ram_dualport (
-	.clock(!clk), /* RAM writes on rising edge, so change it to falling */
+	.clock(clk), /* RAM writes on rising edge */
 	.data(ram_wr_data),
 	.rdaddress(ram_rd_address),
 	.wraddress(ram_wr_address),
