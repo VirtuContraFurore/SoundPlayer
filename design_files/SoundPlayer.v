@@ -108,16 +108,35 @@ assign ram_wr_address[BUFFER_ADDR_BITS-1:0] = buffer_wr_address;
 assign ram_rd_address[BUFFER_ADDR_BITS] = buffer_active_sel;
 assign ram_wr_address[BUFFER_ADDR_BITS] = !buffer_active_sel;
 
-/*
-CODEC_PLL codec_pll(
-    .inclk0(CLOCK_50),
-    .c0(AUD_XCK) // 18.432 MHz MCLK clock 
-);
-*/
-
 MAIN_PLL main_pll(
     .inclk0(CLOCK_50),
     .c0(clk) /* Set clk to 200 MHz */
+);
+
+Codec codec (
+    .clk(clk),
+    .rst_n(rst_n),
+    
+    /* Audio codec physical pins */
+    .codec_aud_xck_o(AUD_XCK),
+    .codec_aud_bclk_o(AUD_BCLK),
+    .codec_aud_dacdat_o(AUD_DACDAT),
+    .codec_aud_daclrck_o(AUD_DACLRCK),
+    
+    /* shared I2C bus */
+    .codec_i2c_sclk_o(I2C_SCLK),
+    .codec_i2c_sdat_io(I2C_SDAT),
+    
+    /* Buffer interface */
+    .codec_buffer_addr_o(buffer_rd_address),
+    .codec_buffer_sel_o(buffer_active_sel),
+    .codec_buffer_data_i(ram_rd_data),
+    .codec_buffer_filled_i(audio_buffer_filled),
+    .codec_buffer_empty_o(audio_buffer_empty),
+        
+    /* WAV info interface */
+    .wav_info_sampling_rate_i(wav_info_sampling_rate),
+    .wav_info_audio_channels_i(wav_info_audio_channels)
 );
 
 RAM_dualport ram_dualport (
