@@ -1,6 +1,7 @@
 module SoundPlayer(
     CLOCK_50,
     
+    /* General purpose DE2 board features */
     KEY,
     SW,
     LEDR,
@@ -8,10 +9,21 @@ module SoundPlayer(
     GPIO_0,
     GPIO_1,
     
+    /* SD Card physical pins */
     SD_DO,
     SD_DI,
     SD_SCLOCK,
-    SD_CS
+    SD_CS,
+    
+    /* Audio codec physical pins */
+    AUD_XCK,
+    AUD_BCLK,
+    AUD_DACDAT,
+    AUD_DACLRCK,
+    
+    /* shared I2C bus */
+    I2C_SCLK,
+    I2C_SDAT
 );
 
 /* Ports definition */
@@ -28,6 +40,14 @@ output wire SD_SCLOCK;
 output wire SD_CS;
 output [17:0] LEDR;
 output [7:0] LEDG;
+
+output wire AUD_XCK;
+output wire AUD_BCLK;
+output wire AUD_DACDAT;
+output wire AUD_DACLRCK;
+
+output wire I2C_SCLK;
+inout  wire I2C_SDAT;
 
 /* Parameters */
 `include "globals.v"
@@ -63,9 +83,11 @@ wire [BUFFER_ADDR_BITS-1:0] buffer_rd_address;
 wire audio_buffer_empty;
 wire audio_buffer_filled;
 
+wire [31:0] wav_info_sampling_rate;
+wire [ 7:0] wav_info_audio_channels;
+
 /* Internal assignments */
 assign rst_n = KEY[3];
-assign audio_buffer_empty = 1'b1;
 
 /* Logic Analyzer debug routing */
 assign GPIO_0[0] = SD_SCLOCK;
@@ -150,7 +172,11 @@ FAT32_reader fat32_reader (
     .audio_buffer_wren_o(ram_wren),
     .audio_buffer_data_o(ram_wr_data),
     .audio_buffer_filled_o(audio_buffer_filled),
-    .audio_buffer_empty_i(audio_buffer_empty)
+    .audio_buffer_empty_i(audio_buffer_empty),
+    
+    /* WAV info interface */
+    .wav_info_sampling_rate(wav_info_sampling_rate),
+    .wav_info_audio_channels(wav_info_audio_channels)
 );
 
 endmodule
