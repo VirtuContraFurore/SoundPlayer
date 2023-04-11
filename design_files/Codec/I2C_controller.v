@@ -8,6 +8,8 @@ module I2C_Controller (
 	ACK,      //ACK
 	RESET
 );
+
+/* Ports definition */
 input  CLOCK;
 input  [23:0]I2C_DATA;	
 input  GO;
@@ -17,12 +19,10 @@ output wire I2C_SCLK;
 output reg END;	
 output wire ACK;
 
-/* Internal wires */
-
 /* Internal regs */
 reg SDO;
 reg SCLK;
-reg [23:0] SD = 24'h34fefe;
+reg [23:0] SD = 24'h34fefe; /* preloaded test pattern */
 reg [ 5:0] SD_COUNTER;
 reg ACK1, ACK2, ACK3;
 
@@ -31,6 +31,7 @@ assign I2C_SCLK = SCLK | ( ((SD_COUNTER >= 4) && (SD_COUNTER <=30))? ~CLOCK : 1'
 assign I2C_SDAT = SDO ? 1'bZ : 1'b0 ;
 assign ACK = ACK1 | ACK2 | ACK3;
 
+/* Clock generation block */
 always @(negedge RESET or posedge CLOCK ) begin
     if (!RESET) begin
         SD_COUNTER=6'b111111;
@@ -42,6 +43,7 @@ always @(negedge RESET or posedge CLOCK ) begin
     end
 end
 
+/* FSM to handle phy if */
 always @(negedge RESET or  posedge CLOCK ) begin
     if (!RESET) begin
         SCLK=1;
