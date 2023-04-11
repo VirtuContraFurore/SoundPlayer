@@ -14,8 +14,9 @@ module FAT32_reader(
     audio_buffer_addr_o,
     audio_buffer_wren_o,
     audio_buffer_data_o,
-    audio_buffer_filled_o,
     audio_buffer_empty_i,
+    audio_buffer_empty_ack_o,
+    audio_buffer_filled_o,
         
     /* WAV info interface */
     wav_info_sampling_rate,
@@ -49,6 +50,7 @@ output reg [8:0] audio_buffer_data_o = 0;
 output reg [BUFFER_ADDR_BITS-1:0] audio_buffer_addr_o = 0;
 output reg audio_buffer_wren_o = 0;
 output reg audio_buffer_filled_o = 0;
+output reg audio_buffer_empty_ack_o = 0;
 
 output wire [31:0] wav_info_sampling_rate;
 output wire [ 7:0] wav_info_audio_channels;
