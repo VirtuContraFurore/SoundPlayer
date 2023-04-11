@@ -67,6 +67,7 @@ reg [FSM_STATE_BITS-1:0] fsm_state;
 /* Private wires */
 wire [DATA_BITS-1:0] sample;
 wire end_of_sample;
+wire i2s_idle;
 
 /* Private assignments */
 assign i2s_idle = fsm_state == FSM_IDLE;
