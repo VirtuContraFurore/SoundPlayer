@@ -77,7 +77,7 @@ assign end_of_sample = (bclk_ticks == (BCLK_TICKS_PER_SAMPLE-1))
                         && (xck_counter == XCK_CNT_TOP);
 
 /* Obtaining data_bit from blck_cycles */                      
-always begin
+always @ (bclk_ticks) begin
     if(bclk_ticks < LEADING_BITS)
         data_bit <= DATA_BITS - 1;
     else if(bclk_ticks < LEADING_BITS + DATA_BITS)
