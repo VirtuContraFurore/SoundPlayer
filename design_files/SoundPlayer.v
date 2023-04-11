@@ -81,6 +81,7 @@ wire [BUFFER_ADDR_BITS-1:0] buffer_wr_address;
 wire [BUFFER_ADDR_BITS-1:0] buffer_rd_address;
 
 wire audio_buffer_empty;
+wire audio_buffer_empty_ack;
 wire audio_buffer_filled;
 
 wire [31:0] wav_info_sampling_rate;
@@ -135,6 +136,7 @@ Codec codec (
     .codec_buffer_data_i(ram_rd_data),
     .codec_buffer_filled_i(audio_buffer_filled),
     .codec_buffer_empty_o(audio_buffer_empty),
+    .codec_buffer_empty_ack_i(audio_buffer_empty_ack),
         
     /* WAV info interface */
     .wav_info_sampling_rate_i(wav_info_sampling_rate),
@@ -194,6 +196,7 @@ FAT32_reader fat32_reader (
     .audio_buffer_data_o(ram_wr_data),
     .audio_buffer_filled_o(audio_buffer_filled),
     .audio_buffer_empty_i(audio_buffer_empty),
+    .audio_buffer_empty_ack_o(audio_buffer_empty_ack),
     
     /* WAV info interface */
     .wav_info_sampling_rate(wav_info_sampling_rate),
