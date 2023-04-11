@@ -147,7 +147,7 @@ assign wav_sample_rate_ok = wav_sample_rate == 32'd44100;
 assign wav_data_chunk_ok = (wav_file_subchunk2_id[0] == "d") && (wav_file_subchunk2_id[1] == "a") &&
                            (wav_file_subchunk2_id[2] == "t") && (wav_file_subchunk2_id[3] == "a");
                            
-assign wav_info_audio_channels = wav_num_channels;
+assign wav_info_audio_channels = wav_num_channels[ 7:0];
 assign wav_info_sampling_rate = wav_sample_rate;
                    
 /* Compute address of a given cluster */

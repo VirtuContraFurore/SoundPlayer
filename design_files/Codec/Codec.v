@@ -67,12 +67,12 @@ wire swap_buffers;
 reg i2s_send = 0;
 reg [DAC_BITS-1:0] data_R = 0;
 reg [DAC_BITS-1:0] data_L = 0;
-reg [1:0] sample_cnt = 0;
+reg [2:0] sample_cnt = 0;
 reg [FSM_STATE_BITS-1:0] fsm_state = 0;
 
 /* Private assignments */
 assign sample_cnt_top = (2 * wav_info_audio_channels_i) - 1;
-assign buffer_is_over = codec_buffer_addr_o == BUFFER_SIZE_BYTES-1;
+assign buffer_is_over = codec_buffer_addr_o == (BUFFER_SIZE_BYTES-1);
 assign swap_buffers   = buffer_is_over && codec_buffer_filled_i;
 
 /* Private instances */
@@ -110,6 +110,8 @@ always @ (posedge clk) begin
         codec_buffer_sel_o <= 0;
         codec_buffer_empty_o <= 0;
         codec_buffer_addr_o <= 0;
+        i2s_send <= 0;
+        sample_cnt <= 0;
         fsm_state <= FSM_WAIT_BUFFER_0;
     end else case(fsm_state)
         FSM_WAIT_BUFFER_0: begin

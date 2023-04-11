@@ -24,7 +24,7 @@ localparam SET_FORMAT	=	8;
 localparam SAMPLE_CTRL	=	9;
 localparam SET_ACTIVE	=	10;
 localparam LUT_SIZE	    =	11;
-localparam VOL = 98;
+localparam VOL = 50;
 
 /* Ports definition */
 input  clk;

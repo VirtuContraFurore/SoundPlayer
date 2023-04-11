@@ -58,11 +58,11 @@ output wire i2s_done_o;
 reg [XCK_CNT_BITS-1:0]    xck_counter = 0;
 reg [BCLK_CNT_BITS-1:0]   bclk_counter = 0;
 reg [BCLK_TICKS_BITS-1:0] bclk_ticks = 0;
-reg [BCLK_TICKS_BITS-1:0] data_bit;
-reg [DATA_BITS-1:0] sample_L;
-reg [DATA_BITS-1:0] sample_R; 
+reg [BCLK_TICKS_BITS-1:0] data_bit = 0;
+reg [DATA_BITS-1:0] sample_L = 0;
+reg [DATA_BITS-1:0] sample_R = 0; 
 
-reg [FSM_STATE_BITS-1:0] fsm_state;
+reg [FSM_STATE_BITS-1:0] fsm_state = 0;
 
 /* Private wires */
 wire [DATA_BITS-1:0] sample;
@@ -129,7 +129,7 @@ always @ (posedge clk) begin
         xck_counter <= (xck_counter < XCK_CNT_TOP)  ? xck_counter + 1'b1 : 0;
         codec_aud_xck_o <= (xck_counter < XCK_CNT_TOP) && (xck_counter > (XCK_CNT_HALF-2)); 
  
-        if(!i2s_idle && xck_counter == XCK_CNT_TOP) begin
+        if(!i2s_idle && (xck_counter == XCK_CNT_TOP)) begin
             bclk_counter     <= (bclk_counter < BCLK_CNT_TOP)  ? bclk_counter + 1'b1 : 0;
             codec_aud_bclk_o <= (bclk_counter < BCLK_CNT_TOP) && (bclk_counter > (BCLK_CNT_HALF-2));
             
