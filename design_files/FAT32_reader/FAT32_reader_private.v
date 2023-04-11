@@ -23,7 +23,9 @@ parameter FSM_PARSE_WAV_FILE_5      = 14;
 parameter FSM_PARSE_WAV_FILE_6      = 15; 
 parameter FSM_PARSE_WAV_FILE_7      = 16;
 parameter FSM_PARSE_WAV_FILE_8      = 17;
-parameter FSM_STATES                = 18; 
+parameter FSM_WAIT_BUFFER_0         = 18;
+parameter FSM_WAIT_BUFFER_1         = 19;
+parameter FSM_STATES                = 20; 
 parameter FSM_BITS         = $clog2(FSM_STATES);
 
 
