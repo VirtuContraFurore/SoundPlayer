@@ -25,10 +25,10 @@ HEADER
 	VERSION = 1;
 	TIME_UNIT = ns;
 	DATA_OFFSET = 0.0;
-	DATA_DURATION = 30000.0;
+	DATA_DURATION = 60000.0;
 	SIMULATION_TIME = 0.0;
 	GRID_PHASE = 0.0;
-	GRID_PERIOD = 10.0;
+	GRID_PERIOD = 5.0;
 	GRID_DUTY_CYCLE = 50;
 }
 
@@ -459,7 +459,7 @@ TRANSITION_LIST("clk")
 		REPEAT = 1;
 		NODE
 		{
-			REPEAT = 6000;
+			REPEAT = 12000;
 			LEVEL 0 FOR 2.5;
 			LEVEL 1 FOR 2.5;
 		}
@@ -471,8 +471,9 @@ TRANSITION_LIST("codec_aud_xck_o")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL X FOR 999.0;
-		LEVEL 0 FOR 29001.0;
+		LEVEL 0 FOR 10.0;
+		LEVEL X FOR 989.0;
+		LEVEL 0 FOR 59001.0;
 	}
 }
 
@@ -481,8 +482,8 @@ TRANSITION_LIST("rst_n")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 20.0;
-		LEVEL 1 FOR 29980.0;
+		LEVEL 0 FOR 5.0;
+		LEVEL 1 FOR 59995.0;
 	}
 }
 
@@ -491,7 +492,7 @@ TRANSITION_LIST("i2s_sample_data_L_i[15]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 1 FOR 30000.0;
+		LEVEL 1 FOR 60000.0;
 	}
 }
 
@@ -500,7 +501,7 @@ TRANSITION_LIST("i2s_sample_data_L_i[14]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 30000.0;
+		LEVEL 0 FOR 60000.0;
 	}
 }
 
@@ -509,7 +510,7 @@ TRANSITION_LIST("i2s_sample_data_L_i[13]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 1 FOR 30000.0;
+		LEVEL 1 FOR 60000.0;
 	}
 }
 
@@ -518,7 +519,7 @@ TRANSITION_LIST("i2s_sample_data_L_i[12]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 30000.0;
+		LEVEL 0 FOR 60000.0;
 	}
 }
 
@@ -527,7 +528,7 @@ TRANSITION_LIST("i2s_sample_data_L_i[11]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 1 FOR 30000.0;
+		LEVEL 1 FOR 60000.0;
 	}
 }
 
@@ -536,7 +537,7 @@ TRANSITION_LIST("i2s_sample_data_L_i[10]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 30000.0;
+		LEVEL 0 FOR 60000.0;
 	}
 }
 
@@ -545,7 +546,7 @@ TRANSITION_LIST("i2s_sample_data_L_i[9]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 1 FOR 30000.0;
+		LEVEL 1 FOR 60000.0;
 	}
 }
 
@@ -554,7 +555,7 @@ TRANSITION_LIST("i2s_sample_data_L_i[8]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 30000.0;
+		LEVEL 0 FOR 60000.0;
 	}
 }
 
@@ -563,7 +564,7 @@ TRANSITION_LIST("i2s_sample_data_L_i[7]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 1 FOR 30000.0;
+		LEVEL 1 FOR 60000.0;
 	}
 }
 
@@ -572,7 +573,7 @@ TRANSITION_LIST("i2s_sample_data_L_i[6]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 30000.0;
+		LEVEL 0 FOR 60000.0;
 	}
 }
 
@@ -581,7 +582,7 @@ TRANSITION_LIST("i2s_sample_data_L_i[5]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 1 FOR 30000.0;
+		LEVEL 1 FOR 60000.0;
 	}
 }
 
@@ -590,7 +591,7 @@ TRANSITION_LIST("i2s_sample_data_L_i[4]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 30000.0;
+		LEVEL 0 FOR 60000.0;
 	}
 }
 
@@ -599,7 +600,7 @@ TRANSITION_LIST("i2s_sample_data_L_i[3]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 1 FOR 30000.0;
+		LEVEL 1 FOR 60000.0;
 	}
 }
 
@@ -608,7 +609,7 @@ TRANSITION_LIST("i2s_sample_data_L_i[2]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 30000.0;
+		LEVEL 0 FOR 60000.0;
 	}
 }
 
@@ -617,7 +618,7 @@ TRANSITION_LIST("i2s_sample_data_L_i[1]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 1 FOR 30000.0;
+		LEVEL 1 FOR 60000.0;
 	}
 }
 
@@ -626,7 +627,7 @@ TRANSITION_LIST("i2s_sample_data_L_i[0]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 30000.0;
+		LEVEL 0 FOR 60000.0;
 	}
 }
 
@@ -635,7 +636,7 @@ TRANSITION_LIST("i2s_sample_data_R_i[15]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 30000.0;
+		LEVEL 0 FOR 60000.0;
 	}
 }
 
@@ -644,7 +645,7 @@ TRANSITION_LIST("i2s_sample_data_R_i[14]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 30000.0;
+		LEVEL 0 FOR 60000.0;
 	}
 }
 
@@ -653,7 +654,7 @@ TRANSITION_LIST("i2s_sample_data_R_i[13]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 30000.0;
+		LEVEL 0 FOR 60000.0;
 	}
 }
 
@@ -662,7 +663,7 @@ TRANSITION_LIST("i2s_sample_data_R_i[12]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 30000.0;
+		LEVEL 0 FOR 60000.0;
 	}
 }
 
@@ -671,7 +672,7 @@ TRANSITION_LIST("i2s_sample_data_R_i[11]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 1 FOR 30000.0;
+		LEVEL 1 FOR 60000.0;
 	}
 }
 
@@ -680,7 +681,7 @@ TRANSITION_LIST("i2s_sample_data_R_i[10]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 30000.0;
+		LEVEL 0 FOR 60000.0;
 	}
 }
 
@@ -689,7 +690,7 @@ TRANSITION_LIST("i2s_sample_data_R_i[9]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 1 FOR 30000.0;
+		LEVEL 1 FOR 60000.0;
 	}
 }
 
@@ -698,7 +699,7 @@ TRANSITION_LIST("i2s_sample_data_R_i[8]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 30000.0;
+		LEVEL 0 FOR 60000.0;
 	}
 }
 
@@ -707,7 +708,7 @@ TRANSITION_LIST("i2s_sample_data_R_i[7]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 1 FOR 30000.0;
+		LEVEL 1 FOR 60000.0;
 	}
 }
 
@@ -716,7 +717,7 @@ TRANSITION_LIST("i2s_sample_data_R_i[6]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 30000.0;
+		LEVEL 0 FOR 60000.0;
 	}
 }
 
@@ -725,7 +726,7 @@ TRANSITION_LIST("i2s_sample_data_R_i[5]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 1 FOR 30000.0;
+		LEVEL 1 FOR 60000.0;
 	}
 }
 
@@ -734,7 +735,7 @@ TRANSITION_LIST("i2s_sample_data_R_i[4]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 30000.0;
+		LEVEL 0 FOR 60000.0;
 	}
 }
 
@@ -743,7 +744,7 @@ TRANSITION_LIST("i2s_sample_data_R_i[3]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 1 FOR 30000.0;
+		LEVEL 1 FOR 60000.0;
 	}
 }
 
@@ -752,7 +753,7 @@ TRANSITION_LIST("i2s_sample_data_R_i[2]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 30000.0;
+		LEVEL 0 FOR 60000.0;
 	}
 }
 
@@ -761,7 +762,7 @@ TRANSITION_LIST("i2s_sample_data_R_i[1]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 1 FOR 30000.0;
+		LEVEL 1 FOR 60000.0;
 	}
 }
 
@@ -770,7 +771,7 @@ TRANSITION_LIST("i2s_sample_data_R_i[0]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 30000.0;
+		LEVEL 0 FOR 60000.0;
 	}
 }
 
@@ -779,7 +780,8 @@ TRANSITION_LIST("codec_aud_bclk_o")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL X FOR 30000.0;
+		LEVEL X FOR 29999.0;
+		LEVEL 0 FOR 30001.0;
 	}
 }
 
@@ -788,7 +790,8 @@ TRANSITION_LIST("codec_aud_dacdat_o")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL X FOR 30000.0;
+		LEVEL X FOR 29999.0;
+		LEVEL 0 FOR 30001.0;
 	}
 }
 
@@ -797,7 +800,8 @@ TRANSITION_LIST("codec_aud_daclrck_o")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL X FOR 30000.0;
+		LEVEL X FOR 29999.0;
+		LEVEL 0 FOR 30001.0;
 	}
 }
 
@@ -806,7 +810,8 @@ TRANSITION_LIST("i2s_done_o")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL X FOR 30000.0;
+		LEVEL X FOR 29999.0;
+		LEVEL 0 FOR 30001.0;
 	}
 }
 
@@ -815,7 +820,7 @@ TRANSITION_LIST("i2s_send_i")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 1 FOR 30000.0;
+		LEVEL 1 FOR 60000.0;
 	}
 }
 
