@@ -58,9 +58,9 @@ output wire i2s_done_o;
 reg [XCK_CNT_BITS-1:0]    xck_counter = 0;
 reg [BCLK_CNT_BITS-1:0]   bclk_counter = 0;
 reg [BCLK_TICKS_BITS-1:0] bclk_ticks = 0;
+reg [BCLK_TICKS_BITS-1:0] data_bit;
 reg [DATA_BITS-1:0] sample_L;
 reg [DATA_BITS-1:0] sample_R; 
-reg [BCLK_TICKS_BITS-1:0] data_bit;
 
 reg [FSM_STATE_BITS-1:0] fsm_state;
 
@@ -69,7 +69,8 @@ wire [DATA_BITS-1:0] sample;
 wire end_of_sample;
 
 /* Private assignments */
-assign i2s_done_o = fsm_state == FSM_IDLE;
+assign i2s_idle = fsm_state == FSM_IDLE;
+assign i2s_done_o = (codec_aud_daclrck_o & end_of_sample) | i2s_idle;
 assign sample = (codec_aud_daclrck_o) ? sample_L : sample_R;
 assign codec_aud_dacdat_o = sample[data_bit];
 assign end_of_sample = (bclk_ticks == (BCLK_TICKS_PER_SAMPLE-1))
@@ -79,9 +80,9 @@ assign end_of_sample = (bclk_ticks == (BCLK_TICKS_PER_SAMPLE-1))
 /* Obtaining data_bit from blck_cycles */                      
 always @ (bclk_ticks) begin
     if(bclk_ticks < LEADING_BITS)
-        data_bit <= DATA_BITS - 1;
+        data_bit <= DATA_BITS - 1'b1;
     else if(bclk_ticks < LEADING_BITS + DATA_BITS)
-        data_bit <= LEADING_BITS + DATA_BITS - 1 - bclk_ticks;
+        data_bit <= LEADING_BITS + DATA_BITS - 1'b1 - bclk_ticks;
     else
         data_bit <= 0;
 end
@@ -127,7 +128,7 @@ always @ (posedge clk) begin
         xck_counter <= (xck_counter < XCK_CNT_TOP)  ? xck_counter + 1'b1 : 0;
         codec_aud_xck_o <= (xck_counter < XCK_CNT_TOP) && (xck_counter > (XCK_CNT_HALF-2)); 
  
-        if(!i2s_done_o && xck_counter == XCK_CNT_TOP) begin
+        if(!i2s_idle && xck_counter == XCK_CNT_TOP) begin
             bclk_counter     <= (bclk_counter < BCLK_CNT_TOP)  ? bclk_counter + 1'b1 : 0;
             codec_aud_bclk_o <= (bclk_counter < BCLK_CNT_TOP) && (bclk_counter > (BCLK_CNT_HALF-2));
             
