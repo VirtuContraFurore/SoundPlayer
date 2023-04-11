@@ -57,6 +57,8 @@ output wire [ 7:0] wav_info_audio_channels;
 
 /* Private regs */
 reg [FSM_BITS-1:0] fsm_state = 0;
+reg [FSM_BITS-1:0] linked_state = 0;
+
 
 reg card_req = 0;
 reg card_single = 1;
@@ -163,6 +165,9 @@ assign wav_info_sampling_rate = wav_sample_rate;
 /* Macro to read a sequetial FAT sector (which is equal to an SD sector for our purposes) */
 `define READ_MULTI_SECT(sect_addr, next_state) begin card_req <= 1'b1; card_addr <= (sect_addr); card_single <=1'b0; fsm_state <= (card_ready) ? fsm_state : (next_state); end
 
+/* Macro to wait buffer */
+`define WAIT_BUFFER_EMPTY(next_state) begin fsm_state <= FSM_WAIT_BUFFER_0; linked_state <= (next_state); end
+
 always @(posedge clk) begin
     if(!rst_n) begin
         fsm_state <= FSM_READ_MBR_0;
@@ -219,7 +224,7 @@ always @(posedge clk) begin
     end
     FSM_READ_FAT_2: begin
         dir_entry_idx <= 0;
-        fsm_state <= FSM_PARSE_FILE_ENTRY_0;
+        `WAIT_BUFFER_EMPTY(FSM_PARSE_FILE_ENTRY_0)
     end
     
     /* Read directory entries */
@@ -323,7 +328,7 @@ always @(posedge clk) begin
             /* Signal buffer is full */
             if(audio_buffer_addr_o == (BUFFER_SIZE_BYTES-1)) begin
                 audio_buffer_filled_o <= 1'b1;
-                fsm_state <= FSM_PARSE_WAV_FILE_8;
+                `WAIT_BUFFER_EMPTY(FSM_PARSE_WAV_FILE_8)
             end 
             else if(sector_count == fat32_sectors_per_cluster) begin
                 fsm_state <= FSM_PARSE_WAV_FILE_3; /* Warning: if this is last cluster and buffer is not full it won't be played, need to flush buffer (zero fill last part) */
@@ -362,13 +367,25 @@ always @(posedge clk) begin
         card_req <= 0;
         fsm_state <= (card_ready) ? FSM_PARSE_FILE_ENTRY_0 : fsm_state; /* Skip this file and go to next file entry */
     end
-    FSM_PARSE_WAV_FILE_8: begin /* Wait for buffer */
+    FSM_PARSE_WAV_FILE_8: begin
+        if(sector_count == fat32_sectors_per_cluster)
+            fsm_state <= FSM_PARSE_WAV_FILE_3;
+        else
+            `READ_MULTI_SECT( `CLUSTER_ADDR(file_current_cluster) + sector_count, FSM_PARSE_WAV_FILE_2) /* Resume cluster reading from the sector we left with */
+    end
+    
+    /* Wait for audio buffer */
+    FSM_WAIT_BUFFER_0: begin /* Wait for buffer */
         if(audio_buffer_empty_i) begin
-            audio_buffer_filled_o<= 0; /* Clear buffer filled flag */
-            if(sector_count == fat32_sectors_per_cluster)
-                fsm_state <= FSM_PARSE_WAV_FILE_3;
-            else
-                `READ_MULTI_SECT( `CLUSTER_ADDR(file_current_cluster) + sector_count, FSM_PARSE_WAV_FILE_2) /* Resume cluster reading from the sector we left with */
+            audio_buffer_filled_o <= 0; /* Clear buffer filled flag */
+            audio_buffer_empty_ack_o <= 1'b1; /* Assert ack of request */
+            fsm_state <= FSM_WAIT_BUFFER_1;
+        end
+    end
+    FSM_WAIT_BUFFER_1: begin
+        if(!audio_buffer_empty_i) begin
+            audio_buffer_empty_ack_o <= 0; /* de-assert ack of request */
+            fsm_state <= linked_state;
         end
     end
     endcase
