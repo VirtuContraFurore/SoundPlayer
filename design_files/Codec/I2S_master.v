@@ -20,7 +20,6 @@ module I2S_master #(
 
 /* Params */
 `include "../globals.v"
-`include "../buffer_consts.v"
 
 localparam XCK_CNT_BITS = $clog2(`CODEC_MCLK_DIV);  /* CODEC_MCLK_DIV is the division factor used to obtain MCLK from main clock */
 localparam XCK_CNT_TOP  = `CODEC_MCLK_DIV - 1;
@@ -81,7 +80,7 @@ assign end_of_sample = (bclk_ticks == (BCLK_TICKS_PER_SAMPLE-1))
 always begin
     if(bclk_ticks < LEADING_BITS)
         data_bit <= DATA_BITS - 1;
-    else if(bclk_ticks < LEADING_BITS + DATA_BITS - 1)
+    else if(bclk_ticks < LEADING_BITS + DATA_BITS)
         data_bit <= LEADING_BITS + DATA_BITS - 1 - bclk_ticks;
     else
         data_bit <= 0;
