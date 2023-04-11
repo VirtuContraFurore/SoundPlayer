@@ -1,7 +1,7 @@
 module I2S_master #(
-    parameter LEADING_BITS  = 1,
-    parameter DATA_BITS     = 16,
-    parameter TRAILING_BITS = 15
+    parameter LEADING_BITS  = 1,  /* Dummy bits before sample */
+    parameter DATA_BITS     = 16, /* Widht in bits of one sample */
+    parameter TRAILING_BITS = 15  /* Dummy bits after sample */
 )(
     clk, rst_n,
     
