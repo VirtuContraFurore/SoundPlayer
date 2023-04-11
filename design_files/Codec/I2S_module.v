@@ -5,7 +5,7 @@ module I2S_module (
 	buffer_filled_i,
 	reset_n,
 	buffer_data_in,
-	BCLK,
+	
 	
 	address,
 	I2S_BCLK,
@@ -17,7 +17,7 @@ module I2S_module (
 );
 
 	/* Params */
-	`include "../buffer_consts.v";
+	`include "../buffer_consts.v"
 	localparam WAIT = 2'd0;
 	localparam READ = 2'd1;
 	
@@ -29,7 +29,6 @@ module I2S_module (
 	input  	buffer_filled_i;
 	input  	reset_n;
 	input 	[15:0]buffer_data_in;
-	input  	BCLK; 							//clock form the prescaler
 	
 	output	[BUFFER_ADDR_BITS-1:0]address;   
 	output 	I2S_BCLK;						//3.175 MHz	
@@ -53,9 +52,9 @@ module I2S_module (
 	integer 	rd_counter,idato;
 	
 	/*private wire  definition*/
-	
+	wire BCLK;
 
-
+divisoreinfrequenzaI2S divisoreinfrequenzaI2S (.master_clock(master_clock), .reset_n(reset_n), .clk_I2S(BCLK));
 assign I2S_BCLK = BCLK | I2S_BCLK_en ;
 
 

@@ -1,6 +1,6 @@
-module divisorefrequenza_I2S_I2C(clk_I2S,clk_I2C,reset_n,master_clock);
+module divisorefrequenza_I2S_I2C(clk_I2S,reset_n,master_clock);
 input master_clock,reset_n;
-output clk_I2S, clk_I2C;
+output clk_I2S;
 reg [15:0]count;
 
 always@(posedge master_clock)
