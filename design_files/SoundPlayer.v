@@ -151,7 +151,7 @@ Codec codec (
 );
 
 RAM_dualport ram_dualport (
-	.clock(clk), /* RAM writes on rising edge */
+	.clock(!clk), /* RAM writes on rising edge if clk not inverted */
 	.data(ram_wr_data),
 	.rdaddress(ram_rd_address),
 	.wraddress(ram_wr_address),
