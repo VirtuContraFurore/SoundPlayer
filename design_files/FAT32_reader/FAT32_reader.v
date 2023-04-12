@@ -359,7 +359,7 @@ always @(posedge clk) begin
         end
     end
     FSM_PARSE_WAV_FILE_5: begin /* End of file reached */
-        //TODO: fsm_state <= FSM_PARSE_FILE_ENTRY_0; /* Go to next file entry */
+        fsm_state <= FSM_PARSE_FILE_ENTRY_0; /* Go to next file entry */
     end
     FSM_PARSE_WAV_FILE_6: `READ_MULTI_SECT( `CLUSTER_ADDR(file_current_cluster), FSM_PARSE_WAV_FILE_2) /* Stard reading next cluster */
     FSM_PARSE_WAV_FILE_7: begin /* Error in WAV file header */
