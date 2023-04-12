@@ -132,7 +132,8 @@ assign fat32_data_region_start = fat32_fat_region_start + (fat32_sectors_per_fat
 
 assign dir_entry_idx_max = fat32_bytes_per_sector << (highest_bit(fat32_sectors_per_cluster) - DIR_ENTRY_SHIFT);
 
-assign file_good = (file_attributes[FILE_ATTR_SUBDIRECTORY_BIT] == 0) && 
+assign file_good = (file_name_ch0 != 16'hE5) &&
+                   (file_attributes[FILE_ATTR_SUBDIRECTORY_BIT] == 0) && 
                    (file_ext[0] == "W") && (file_ext[1] == "A") && (file_ext[2] == "V");
                    
 assign wav_chunk_ok = (wav_file_chunk_id[0] == "R") && (wav_file_chunk_id[1] == "I") &&
