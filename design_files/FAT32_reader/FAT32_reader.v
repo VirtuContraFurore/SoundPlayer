@@ -230,21 +230,21 @@ always @(posedge clk) begin
     /* Read directory entries */
     FSM_PARSE_FILE_ENTRY_0: `READ_SINGLE_SECT( `ROOT_ENTRY_ADDR(dir_entry_idx), FSM_PARSE_FILE_ENTRY_1)
     FSM_PARSE_FILE_ENTRY_1: begin
-        if(card_new_data) begin
-            case(card_data_idx)
-            dir_entry_idx * DIR_ENTRY_SIZE + 9'h00: file_name_ch0 <= card_data;
-            dir_entry_idx * DIR_ENTRY_SIZE + 9'h08: file_ext[0] <= card_data;
-            dir_entry_idx * DIR_ENTRY_SIZE + 9'h09: file_ext[1] <= card_data;
-            dir_entry_idx * DIR_ENTRY_SIZE + 9'h0A: file_ext[2] <= card_data;
-            dir_entry_idx * DIR_ENTRY_SIZE + 9'h0B: file_attributes <= card_data;
-            dir_entry_idx * DIR_ENTRY_SIZE + 9'h14: file_first_cluster[23:16] <= card_data; 
-            dir_entry_idx * DIR_ENTRY_SIZE + 9'h15: file_first_cluster[31:24] <= card_data; 
-            dir_entry_idx * DIR_ENTRY_SIZE + 9'h1A: file_first_cluster[ 7: 0] <= card_data; 
-            dir_entry_idx * DIR_ENTRY_SIZE + 9'h1B: file_first_cluster[15: 8] <= card_data;
-            dir_entry_idx * DIR_ENTRY_SIZE + 9'h1C: file_size_bytes[ 7: 0] <= card_data; 
-            dir_entry_idx * DIR_ENTRY_SIZE + 9'h1D: file_size_bytes[15: 8] <= card_data;
-            dir_entry_idx * DIR_ENTRY_SIZE + 9'h1E: file_size_bytes[23:16] <= card_data; 
-            dir_entry_idx * DIR_ENTRY_SIZE + 9'h1F: file_size_bytes[31:24] <= card_data;
+        if(card_new_data && (card_data_idx >= (dir_entry_idx[3:0] * DIR_ENTRY_SIZE))) begin
+            case(card_data_idx - (dir_entry_idx[3:0] * DIR_ENTRY_SIZE))
+            9'h00: file_name_ch0 <= card_data;
+            9'h08: file_ext[0] <= card_data;
+            9'h09: file_ext[1] <= card_data;
+            9'h0A: file_ext[2] <= card_data;
+            9'h0B: file_attributes <= card_data;
+            9'h14: file_first_cluster[23:16] <= card_data; 
+            9'h15: file_first_cluster[31:24] <= card_data; 
+            9'h1A: file_first_cluster[ 7: 0] <= card_data; 
+            9'h1B: file_first_cluster[15: 8] <= card_data;
+            9'h1C: file_size_bytes[ 7: 0] <= card_data; 
+            9'h1D: file_size_bytes[15: 8] <= card_data;
+            9'h1E: file_size_bytes[23:16] <= card_data; 
+            9'h1F: file_size_bytes[31:24] <= card_data;
             endcase
         end
         if(card_ready) begin
