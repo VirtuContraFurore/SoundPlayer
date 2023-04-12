@@ -87,6 +87,11 @@ wire audio_buffer_filled;
 wire [31:0] wav_info_sampling_rate;
 wire [ 7:0] wav_info_audio_channels;
 
+/* Internal regs */
+reg pause_song = 0;
+reg key0_pressed = 0;
+
+
 /* Internal assignments */
 assign rst_n = KEY[3];
 
@@ -104,6 +109,7 @@ assign GPIO_0[7] = SW[0] ? I2C_SDAT : AUD_DACDAT;
 assign LEDG[2] = sd_configured & !error_no_fat_found; /* no fat found flag valid only if card configured */
 assign LEDG[1] = block_read_card_ready;
 assign LEDG[0] = sd_configured;
+assign LEDG[3] = pause_song;
 
 /* Double buffer and RAM address translation */
 assign ram_rd_address[BUFFER_ADDR_BITS-1:0] = buffer_rd_address;
@@ -119,6 +125,7 @@ MAIN_PLL main_pll(
 Codec codec (
     .clk(clk),
     .rst_n(rst_n),
+    .codec_pause_i(pause_song),
     
     /* Audio codec physical pins */
     .codec_aud_xck_o(AUD_XCK),
@@ -202,6 +209,21 @@ FAT32_reader fat32_reader (
     .wav_info_sampling_rate(wav_info_sampling_rate),
     .wav_info_audio_channels(wav_info_audio_channels)
 );
+
+/* Push button KEY0 event */
+always @ (posedge clk) begin
+    if(!rst_n) begin
+        pause_song <= 0;
+        key0_pressed <= 0;
+    end else begin
+        if(!KEY[0] && !key0_pressed) begin
+            pause_song <= !pause_song;
+            key0_pressed <= 1'b1;
+        end else if(KEY[0]) begin
+            key0_pressed <= 0;
+        end
+    end
+end
 
 endmodule
 
