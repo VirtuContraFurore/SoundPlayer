@@ -61,7 +61,7 @@ input wire [31:0] wav_info_sampling_rate_i;
 
 /* Private wires */
 wire i2s_done;
-wire sample_cnt_top;
+wire [2:0] sample_cnt_top;
 wire buffer_is_over;
 wire swap_buffers;
 
@@ -165,10 +165,9 @@ always @ (posedge clk) begin
             if(codec_buffer_empty_ack_i)
                 codec_buffer_empty_o <= 0;
 
-            fsm_state <= (i2s_done) ? FSM_CONSUMING_BUFFER : fsm_state;
+            fsm_state <= (i2s_done && !codec_pause_i) ? FSM_CONSUMING_BUFFER : fsm_state;
         end
     endcase
 end
-
 
 endmodule
