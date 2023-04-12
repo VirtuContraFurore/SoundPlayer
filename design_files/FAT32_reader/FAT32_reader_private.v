@@ -39,6 +39,6 @@ parameter FAT32_PAR_BLOCK = 9'h00B;
 parameter FAT32_CLUSTER_MASK      = 32'h0fffffff;
 parameter FAT32_LAST_CLUSTER_MASK = 32'h0ffffff0;
 
-parameter DIR_ENTRY_SIZE  = 32;
-parameter DIR_ENTRY_SHIFT = 5'd5;
+parameter DIR_ENTRY_SIZE  = 8'h20;
+parameter DIR_ENTRY_SHIFT = $clog2(DIR_ENTRY_SIZE);
 parameter FILE_ATTR_SUBDIRECTORY_BIT = 4;
