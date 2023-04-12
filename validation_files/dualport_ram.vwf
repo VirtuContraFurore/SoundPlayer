@@ -963,7 +963,9 @@ TRANSITION_LIST("rdaddress[0]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 1000.0;
+		LEVEL 0 FOR 20.0;
+		LEVEL 1 FOR 60.0;
+		LEVEL 0 FOR 920.0;
 	}
 }
 
@@ -1071,7 +1073,9 @@ TRANSITION_LIST("wraddress[0]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 1000.0;
+		LEVEL 0 FOR 20.0;
+		LEVEL 1 FOR 270.0;
+		LEVEL 0 FOR 710.0;
 	}
 }
 
