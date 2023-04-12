@@ -1,5 +1,6 @@
 module Codec (
     clk, rst_n,
+    codec_pause_i,
     
     /* Audio codec physical pins */
     codec_aud_xck_o,
@@ -38,6 +39,7 @@ localparam FSM_STATE_BITS       = $clog2(FSM_STATES);
 /* Ports definition */
 input clk;
 input rst_n;
+input codec_pause_i;
 
 output wire codec_aud_xck_o;
 output wire codec_aud_bclk_o;
@@ -69,6 +71,7 @@ reg [DAC_BITS-1:0] data_R = 0;
 reg [DAC_BITS-1:0] data_L = 0;
 reg [2:0] sample_cnt = 0;
 reg [FSM_STATE_BITS-1:0] fsm_state = 0;
+reg [RAM_READ_WAIT_STATES_BITS-1:0] wait_states = 0;
 
 /* Private assignments */
 assign sample_cnt_top = (2 * wav_info_audio_channels_i) - 1;
@@ -126,30 +129,36 @@ always @ (posedge clk) begin
                 codec_buffer_empty_o <= 1'b1;
                 codec_buffer_addr_o <= 0; 
                 sample_cnt <= 0;
+                wait_states <= 0;
                 fsm_state <= FSM_CONSUMING_BUFFER;
             end
         end
         FSM_CONSUMING_BUFFER: begin
-            codec_buffer_empty_o <= !codec_buffer_empty_ack_i & (swap_buffers | codec_buffer_empty_o);
-            codec_buffer_sel_o   <= codec_buffer_sel_o ^ swap_buffers;
-          
-            codec_buffer_addr_o <= codec_buffer_addr_o + 1'b1;
-            sample_cnt          <= (sample_cnt < sample_cnt_top) ? sample_cnt + 1'b1 : 0;
-            
-            i2s_send <= i2s_send | (sample_cnt == sample_cnt_top);
-            
-            case(sample_cnt)
-                0: begin data_L[ 7:0] <= codec_buffer_data_i; data_R[ 7:0] <= codec_buffer_data_i; end
-                1: begin data_L[15:8] <= codec_buffer_data_i; data_R[15:8] <= codec_buffer_data_i; end
-                2: data_R[ 7:0] <= codec_buffer_data_i;
-                3: data_R[15:8] <= codec_buffer_data_i;
-            endcase
-            
-            if(sample_cnt == sample_cnt_top) begin                    
-                if(buffer_is_over && !codec_buffer_filled_i)
-                    fsm_state <= FSM_WAIT_BUFFER_1;
-                else
-                    fsm_state <= (!i2s_done) ? FSM_WAIT_I2S : fsm_state;
+            if(wait_states == RAM_READ_WAIT_STATES) begin
+                codec_buffer_empty_o <= !codec_buffer_empty_ack_i & (swap_buffers | codec_buffer_empty_o);
+                codec_buffer_sel_o   <= codec_buffer_sel_o ^ swap_buffers;
+              
+                codec_buffer_addr_o <= codec_buffer_addr_o + 1'b1;
+                sample_cnt          <= (sample_cnt < sample_cnt_top) ? sample_cnt + 1'b1 : 0;
+                wait_states <= 0;
+                
+                i2s_send <= i2s_send | (sample_cnt == sample_cnt_top);
+                
+                case(sample_cnt)
+                    0: begin data_L[ 7:0] <= codec_buffer_data_i; data_R[ 7:0] <= codec_buffer_data_i; end
+                    1: begin data_L[15:8] <= codec_buffer_data_i; data_R[15:8] <= codec_buffer_data_i; end
+                    2: data_R[ 7:0] <= codec_buffer_data_i;
+                    3: data_R[15:8] <= codec_buffer_data_i;
+                endcase
+                
+                if(sample_cnt == sample_cnt_top) begin                    
+                    if(buffer_is_over && !codec_buffer_filled_i)
+                        fsm_state <= FSM_WAIT_BUFFER_1;
+                    else
+                        fsm_state <= (!i2s_done) ? FSM_WAIT_I2S : fsm_state;
+                end
+            end else begin
+                wait_states <= wait_states + 1'b1;
             end
         end
         FSM_WAIT_I2S: begin
