@@ -231,7 +231,7 @@ always @(posedge clk) begin
     /* Read directory entries */
     FSM_PARSE_FILE_ENTRY_0: `READ_SINGLE_SECT( `ROOT_ENTRY_ADDR(dir_entry_idx), FSM_PARSE_FILE_ENTRY_1)
     FSM_PARSE_FILE_ENTRY_1: begin
-        if(card_new_data && (card_data_idx >= (dir_entry_idx[3:0] * DIR_ENTRY_SIZE))) begin
+        if(card_new_data && (card_data_idx >= (dir_entry_idx[3:0] * DIR_ENTRY_SIZE))) begin /* [3:0] means that there are 16 file entries for each sector (512 bytes / 32 bytes) */
             case(card_data_idx - (dir_entry_idx[3:0] * DIR_ENTRY_SIZE))
             9'h00: file_name_ch0 <= card_data;
             9'h08: file_ext[0] <= card_data;
