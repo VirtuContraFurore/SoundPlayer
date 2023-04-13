@@ -110,6 +110,11 @@ assign GPIO_0[6] = SW[0] ? I2C_SCLK : AUD_BCLK;
 assign GPIO_0[7] = SW[0] ? I2C_SDAT : AUD_DACDAT;
 
 /* Status LED */
+assign LEDR[3] = buffer_active_sel;
+assign LEDR[2] = audio_buffer_filled;
+assign LEDR[1] = audio_buffer_empty;
+assign LEDR[0] = audio_buffer_empty_ack;
+
 assign LEDG[4] = key12_pressed;
 assign LEDG[3] = pause_song;
 assign LEDG[2] = !error_no_fat_found & sd_configured; /* no fat found flag valid only if card configured */
