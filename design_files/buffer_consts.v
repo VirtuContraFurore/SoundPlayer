@@ -4,7 +4,7 @@
  * For this file, set Properties... -> Type to 'Macro File'
  */
  
-parameter RAM_SIZE_BYTES    = 4096;
+parameter RAM_SIZE_BYTES    = 16384;
 parameter BUFFER_SIZE_BYTES = (RAM_SIZE_BYTES/2);
 
 parameter RAM_ADDR_BITS    = $clog2(RAM_SIZE_BYTES);
