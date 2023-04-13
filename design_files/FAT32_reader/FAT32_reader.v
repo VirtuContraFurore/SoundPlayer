@@ -68,7 +68,6 @@ output reg player_next_song_req_ack_o = 0;
 reg [FSM_BITS-1:0] fsm_state = 0;
 reg [FSM_BITS-1:0] linked_state = 0;
 
-
 reg card_req = 0;
 reg card_single = 1;
 reg [SD_BLOCK_ADDR_BITS-1:0] card_addr = 0;
@@ -86,6 +85,7 @@ reg [31:0] fat32_root_cluster_number = 0;
 
 /* FAT32 directory entry (only entries of root cluster are inspected) */
 reg [11:0] dir_entry_idx = 0; /* Pointer to current directory entry of root cluster */
+reg search_backwards = 0;
 
 reg [7:0] file_name_ch0 = 0;
 reg [7:0] file_ext [3:0]; /* file extension */
@@ -125,6 +125,7 @@ wire wav_sample_rate_ok;
 wire wav_channels_ok;
 wire wav_data_chunk_ok;
 wire wav_audio_format_ok;
+wire [31:0] restart_bytes;
 
 /* Private assignments */
 assign block_read_trigger = card_req;
@@ -159,7 +160,9 @@ assign wav_data_chunk_ok = (wav_file_subchunk2_id[0] == "d") && (wav_file_subchu
                            
 assign wav_info_audio_channels = wav_num_channels[ 7:0];
 assign wav_info_sampling_rate = wav_sample_rate;
-                   
+
+assign restart_bytes = (`RESTART_SONG_AFTER_SECS * `CODEC_FSAMPL_HZ * 2) << wav_sample_rate[1]; /* Multiply by the number of channels which is either 1 or 2 */
+
 /* Compute address of a given cluster */
 `define CLUSTER_ADDR(cluster) (fat32_data_region_start + (((cluster)-2) << highest_bit(fat32_sectors_per_cluster)))
 
@@ -184,6 +187,7 @@ always @(posedge clk) begin
         card_req <= 0;
         card_addr <= 0;
         card_single <= 1'b1;
+        search_backwards <= 0;
     end 
     else case (fsm_state)
     
@@ -265,7 +269,12 @@ always @(posedge clk) begin
             end else begin
                 audio_buffer_addr_o = BUFFER_SIZE_BYTES-1; /* Reset audio buffer address */
                 sector_count <= 0;
-                dir_entry_idx = (dir_entry_idx < (dir_entry_idx_max - 1'b1)) ? dir_entry_idx + 1'b1: 0;
+                if(search_backwards && (dir_entry_idx > 0)) begin
+                    dir_entry_idx <= dir_entry_idx - 1;
+                end else begin
+                    dir_entry_idx = (dir_entry_idx < (dir_entry_idx_max - 1'b1)) ? dir_entry_idx + 1'b1: 0;
+                    search_backwards <= 0; /* Stop search backwards */
+                end
                 fsm_state = (file_good) ? FSM_PARSE_WAV_FILE_0 : FSM_PARSE_FILE_ENTRY_0;
             end
         end
@@ -306,9 +315,10 @@ always @(posedge clk) begin
             9'h2B: begin
                         wav_file_subchunk2_size[31:24] = card_data;
                         wav_byte_counter <= 0;
-                        if(wav_chunk_ok && wav_sample_rate_ok && wav_channels_ok && wav_data_chunk_ok && wav_audio_format_ok)
+                        if(wav_chunk_ok && wav_sample_rate_ok && wav_channels_ok && wav_data_chunk_ok && wav_audio_format_ok) begin
                             fsm_state <= FSM_PARSE_WAV_FILE_2;
-                        else
+                            search_backwards <= 0; /* Stop search backwards if file found */
+                        end else
                             fsm_state <= FSM_PARSE_WAV_FILE_7;
                    end
             endcase
@@ -387,8 +397,15 @@ always @(posedge clk) begin
     /* Wait for audio buffer */
     FSM_WAIT_BUFFER_0: begin /* Wait for buffer or got to next/previous song */
         if(player_next_song_req_i) begin
-            if(!player_next_song_forward_i) /* Restart current song - in order to go to previous song we must save the corresponding entry idx or search directory backwards, not implemented now */
-                dir_entry_idx <= (dir_entry_idx > 0) ? dir_entry_idx - 1 : 0;
+            if(!player_next_song_forward_i) begin
+                if(wav_byte_counter < restart_bytes) begin
+                    dir_entry_idx <= (dir_entry_idx > 1) ? dir_entry_idx - 2 : 0;
+                    search_backwards <= 1'b1;        
+                end else begin
+                    dir_entry_idx <= (dir_entry_idx > 0) ? dir_entry_idx - 1 : 0;
+                    search_backwards <= 0;
+                end
+            end
             player_next_song_req_ack_o <= 1'b1;
             fsm_state <= FSM_ACK_NEXT_SONG_0;
         end else if(audio_buffer_empty_i) begin
