@@ -23,7 +23,12 @@ module FAT32_reader(
     wav_info_audio_channels,
     
     /* Status */
-    error_no_fat_found
+    error_no_fat_found,
+    
+    /* Player ctrl */
+    player_next_song_req_i,
+    player_next_song_req_ack_o,
+    player_next_song_forward_i
 );
 
 /* Parameters */
@@ -54,6 +59,10 @@ output reg audio_buffer_empty_ack_o = 0;
 
 output wire [31:0] wav_info_sampling_rate;
 output wire [ 7:0] wav_info_audio_channels;
+
+input player_next_song_req_i;
+input player_next_song_forward_i;
+output reg player_next_song_req_ack_o = 0;
 
 /* Private regs */
 reg [FSM_BITS-1:0] fsm_state = 0;
@@ -376,8 +385,13 @@ always @(posedge clk) begin
     end
     
     /* Wait for audio buffer */
-    FSM_WAIT_BUFFER_0: begin /* Wait for buffer */
-        if(audio_buffer_empty_i) begin
+    FSM_WAIT_BUFFER_0: begin /* Wait for buffer or got to next/previous song */
+        if(player_next_song_req_i) begin
+            if(!player_next_song_forward_i) /* Restart current song - in order to go to previous song we must save the corresponding entry idx or search directory backwards, not implemented now */
+                dir_entry_idx <= (dir_entry_idx > 0) ? dir_entry_idx - 1 : 0;
+            player_next_song_req_ack_o <= 1'b1;
+            fsm_state <= FSM_ACK_NEXT_SONG_0;
+        end else if(audio_buffer_empty_i) begin
             audio_buffer_filled_o <= 0; /* Clear buffer filled flag */
             audio_buffer_empty_ack_o <= 1'b1; /* Assert ack of request */
             fsm_state <= FSM_WAIT_BUFFER_1;
@@ -389,6 +403,14 @@ always @(posedge clk) begin
             fsm_state <= linked_state;
         end
     end
+    
+    FSM_ACK_NEXT_SONG_0: begin
+        if(!player_next_song_req_i) begin
+            player_next_song_req_ack_o <= 0;
+            fsm_state <= FSM_PARSE_FILE_ENTRY_0;
+        end
+    end
+    
     endcase
 end
 
