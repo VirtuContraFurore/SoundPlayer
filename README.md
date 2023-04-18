@@ -29,8 +29,8 @@ Since Verilog does not allow preprocessor-defined costant to be local, there are
 Those files are shared files meant to be included inside each module that needs to access constant values.
 If QuartusII tries to compile those files will throw errors because `localparam` cannot be used outside module declaration.  
 There are two possible solutions:
-- change file extension to something else than `.v` so that QuartusII does not try to compile tham
-- explicitly tell QuartusII that some files are used to contain custom stuff rather than Verilog source files to be compiled
+- change file extension to something else than `.v` so that QuartusII does not try to compile them  
+- explicitly tell QuartusII that some files are used to contain custom stuff rather than Verilog source files to be compiled  
 we have chosen the latter approch. Hence, some files are marked as 'Macro Files', meaning that they should not be compiled alone as a stand alone Verilog module.
 
 ## Authors
