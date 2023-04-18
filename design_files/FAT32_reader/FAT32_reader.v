@@ -161,7 +161,7 @@ assign wav_data_chunk_ok = (wav_file_subchunk2_id[0] == "d") && (wav_file_subchu
 assign wav_info_audio_channels = wav_num_channels[ 7:0];
 assign wav_info_sampling_rate = wav_sample_rate;
 
-assign restart_bytes = (`RESTART_SONG_AFTER_SECS * `CODEC_FSAMPL_HZ * 2) << wav_sample_rate[1]; /* Multiply by the number of channels which is either 1 or 2 */
+assign restart_bytes = (`RESTART_SONG_AFTER_SECS * `CODEC_FSAMPL_HZ * 2) << wav_info_audio_channels[1]; /* Multiply by the number of channels which is either 1 or 2 */
 
 /* Compute address of a given cluster */
 `define CLUSTER_ADDR(cluster) (fat32_data_region_start + (((cluster)-2) << highest_bit(fat32_sectors_per_cluster)))
