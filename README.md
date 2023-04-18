@@ -15,8 +15,8 @@ root
 ├── validation_files  
 │   ├── SDCard_reader  
 │   └── SPI_master  
-├── convert_audio_file.sh
-└── DE2_pin_assignments_modified.csv
+├── convert_audio_file.sh  
+└── DE2_pin_assignments_modified.csv  
 
 - `design_files` is a folder and contains Verilog source code
 - `validation_files` is a folder and contains test benches and test waveform patterns
