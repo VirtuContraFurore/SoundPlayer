@@ -317,7 +317,10 @@ always @(posedge clk) begin
                         wav_byte_counter <= 0;
                         if(wav_chunk_ok && wav_sample_rate_ok && wav_channels_ok && wav_data_chunk_ok && wav_audio_format_ok) begin
                             fsm_state <= FSM_PARSE_WAV_FILE_2;
-                            search_backwards <= 0; /* Stop search backwards if file found */
+                            if (search_backwards) begin
+                                search_backwards <= 0; /* Stop search backwards if file found */
+                                dir_entry_idx <= dir_entry_idx + 2'd2; /* dir_entry_idx must point to current file entry + 1 */
+                            end
                         end else
                             fsm_state <= FSM_PARSE_WAV_FILE_7;
                    end
