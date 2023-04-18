@@ -97,7 +97,7 @@ reg player_next_song_req = 0;
 reg player_next_song_forward = 0;
 
 /* Internal assignments */
-assign rst_n = KEY[3];
+assign rst_n = !(`BUTTON_RST); /* Reset is active low */
 
 /* Logic Analyzer debug routing */
 assign GPIO_0[0] = SD_SCLOCK;
@@ -231,10 +231,10 @@ always @ (posedge clk) begin
         pause_song <= 0;
         key0_pressed <= 0;
     end else begin
-        if(!KEY[0] && !key0_pressed) begin
+        if(`BUTTON_PAUSE && !key0_pressed) begin
             pause_song <= !pause_song;
             key0_pressed <= 1'b1;
-        end else if(KEY[0]) begin
+        end else if(!`BUTTON_PAUSE) begin
             key0_pressed <= 0;
         end
     end
@@ -245,12 +245,12 @@ always @ (posedge clk) begin
     if(!rst_n) begin
         key12_pressed <= 0;
     end else begin
-        if((!KEY[1] || !KEY[2]) && !key12_pressed) begin
+        if((`BUTTON_NEXT || `BUTTON_PREV) && !key12_pressed) begin
             player_next_song_req <= 1'b1;
-            player_next_song_forward <= !KEY[1];
+            player_next_song_forward <= `BUTTON_NEXT;
             key12_pressed <= 1'b1;
         end else begin
-            if(KEY[1] && KEY[2])
+            if(!`BUTTON_NEXT && !`BUTTON_PREV)
                 key12_pressed <= 0;
             if(player_next_song_req_ack)
                 player_next_song_req <= 0;
