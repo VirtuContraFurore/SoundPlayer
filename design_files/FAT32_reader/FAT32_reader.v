@@ -272,7 +272,7 @@ always @(posedge clk) begin
                 if(search_backwards && (dir_entry_idx > 0)) begin
                     dir_entry_idx <= dir_entry_idx - 1;
                 end else begin
-                    dir_entry_idx = (dir_entry_idx < (dir_entry_idx_max - 1'b1)) ? dir_entry_idx + 1'b1: 0;
+                    dir_entry_idx <= (dir_entry_idx < (dir_entry_idx_max - 1'b1)) ? dir_entry_idx + 1'b1: 0;
                     search_backwards <= 0; /* Stop search backwards */
                 end
                 fsm_state = (file_good) ? FSM_PARSE_WAV_FILE_0 : FSM_PARSE_FILE_ENTRY_0;
