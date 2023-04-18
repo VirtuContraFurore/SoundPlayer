@@ -31,7 +31,8 @@ If QuartusII tries to compile those files will throw errors because `localparam`
 There are two possible solutions:
 - change file extension to something else than `.v` so that QuartusII does not try to compile them  
 - explicitly tell QuartusII that some files are used to contain custom stuff rather than Verilog source files to be compiled  
-we have chosen the latter approch. Hence, some files are marked as 'Macro Files', meaning that they should not be compiled alone as a stand alone Verilog module.
+
+We have chosen the latter approch. Hence, some files are marked as 'Macro Files', meaning that they should not be compiled alone as a stand alone Verilog module.
 
 ## Authors
 - Luca Ceragioli
