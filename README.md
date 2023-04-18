@@ -1,6 +1,7 @@
 # SoundPlayer
 Altera DE2 Sound Player project for the course of Digital Systems Design (9 ects) held at the University of Pisa (Italy).
-Plays wav file in a FAT32 formatted SD Card. Supports only 16 bit 44100 Hz WAV files.
+Plays wav file in a FAT32 formatted SD Card. Supports only 16 bit 44100 Hz WAV files.  
+[Short demo video](https://www.youtube.com/watch?v=giQW_ChssgA)
 
 ## Project file strutcure
 Open this project with Quartus II software.
@@ -16,6 +17,7 @@ root
 │   ├── SDCard_reader  
 │   └── SPI_master  
 ├── convert_audio_file.sh  
+├── relazione.pdf  
 └── DE2_pin_assignments_modified.csv  
 
 - `design_files` is a folder and contains Verilog source code
@@ -23,6 +25,7 @@ root
 - `releases` is a folder and contains stable releases of program files to flash fpga's memory and/or on-board eeprom
 - `convert_audio_file.sh` is a bash script to convert generic audio file to WAV pcm16s 44.1 kHz format
 - `DE2_pin_assignments_modified.csv` is a csv file which contains the pin mapping of the fpga to the DE2 board resources (can be loaeded into Quartus II to ease pin assignment)
+- `relazione.pdf` is a document explaining in details the code and shows some waveforms, unfurtunately is written in Italian, sorry :(  
 
 ## Verilog files not to be compiled
 Since Verilog does not allow preprocessor-defined costant to be local, there are some verilog files which contains only `localparam` statements.
